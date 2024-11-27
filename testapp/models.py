@@ -1,4 +1,3 @@
-# This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
@@ -6,7 +5,6 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-
 
 class Allergy(models.Model):
     symptoms = models.CharField(db_column='Symptoms', primary_key=True, blank=True, null=False, max_length=300)  # Field name made lowercase. The composite primary key (Symptoms, Cust Healthcare ID, Ingredient ID) found, that is not supported. The first column is selected.
@@ -62,7 +60,7 @@ class CustomerEmail(models.Model):
 
 
 class CustomerPhone(models.Model):
-    alberta_healthcare_id = models.OneToOneField('self', models.DO_NOTHING, db_column='Alberta Healthcare ID', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    alberta_healthcare_id = models.OneToOneField(Customer, models.DO_NOTHING, db_column='Alberta Healthcare ID', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     cust_phone_field = models.CharField(db_column='Cust_Phone#', blank=True, null=True, max_length=12)  # Field name made lowercase. Field renamed to remove unsuitable characters. Field renamed because it ended with '_'.
 
     class Meta:
