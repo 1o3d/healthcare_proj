@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from . import forms
+
 # Create your views here.
 def view_pharm(request):
     return HttpResponse('Hello World')
@@ -10,4 +12,5 @@ def home(request):
 
 
 def login(request):
-    return render(request,'login.html')
+    form = forms.CustomerForm
+    return render(request,'login.html', {'form':form})
