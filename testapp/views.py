@@ -13,4 +13,9 @@ def home(request):
 
 def login(request):
     form = forms.CustomerForm
+    if request.method == 'POST':
+        form1 = forms.CustomerForm(request.POST)
+        if(form1.is_valid()):
+            form1.save()
+            return HttpResponse('Succesfully apressed submit and maybe added to database?')
     return render(request,'login.html', {'form':form})
