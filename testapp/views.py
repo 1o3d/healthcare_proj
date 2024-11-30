@@ -20,8 +20,10 @@ def login(request):
 
             try:
                  # https://docs.djangoproject.com/en/5.1/topics/db/queries/
-                cust_user = Customer.objects.get(username = username)
-            except Customer.DoesNotExist:
+                 cust_user = Customer.objects.get(username = username)
+                 dist_user = Distributer.objects.get(username = username)
+                 resp_user = HealthCareRepresentative.objects.get(username = username)
+            except Customer.DoesNotExist or Distributer.DoesNotExist or HealthCareRepresentative.DoesNotExist:
                 print("Invalid username")
                 return redirect('login')
     else:
