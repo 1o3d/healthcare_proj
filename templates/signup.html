@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load django_bootstrap5 %}
+
+<head>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+  <H1>REGISTRATION</H1>
+  <form method="post">
+    {% csrf_token%}
+    {% bootstrap_form form %}
+    {% bootstrap_button button_type="submit" content="Register Account" %}
+  </form>
+</body>
+</html>
