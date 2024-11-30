@@ -23,17 +23,19 @@ def login(request):
                 cust_user = Customer.objects.get(username = username)
             except Customer.DoesNotExist:
                 print("Invalid customer username")
+                return redirect('login')
 
-                try:
-                    rep_user = HealthCareRepresentative.objects.get(username = username)
-                except HealthCareRepresentative.DoesNotExist:
-                    print("Invalid rep username")
+            try:
+                rep_user = HealthCareRepresentative.objects.get(username = username)
+            except HealthCareRepresentative.DoesNotExist:
+                print("Invalid rep username")
+                return redirect('login')
 
-                    try:
-                        dis_user = Distributer.objects.get(username = username)
-                    except Distributer.DoesNotExist:
-                        print("Invalid distributor username")
-                        return redirect('login')
+            try:
+                dis_user = Distributer.objects.get(username = username)
+            except Distributer.DoesNotExist:
+                print("Invalid distributor username")
+                return redirect('login')
     else:
         form = LoginForm()
     return render(request,'login.html', {'form':form})
