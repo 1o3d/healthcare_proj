@@ -18,24 +18,26 @@ def login(request):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
 
+            # check for customer first
             try:
                  # https://docs.djangoproject.com/en/5.1/topics/db/queries/
-                cust_user = Customer.objects.get(username = username)
+                cust_user = Customer.objects.get(username = username)   # Syntax: <variable name> = <model name>.objects.get(<dbcolumn=value>)
+                print(cust_user.first_name + ' ' + cust_user.last_name)
             except Customer.DoesNotExist:
                 print("Invalid customer username")
-                return redirect('login')
 
-            try:
-                rep_user = HealthCareRepresentative.objects.get(username = username)
-            except HealthCareRepresentative.DoesNotExist:
-                print("Invalid rep username")
-                return redirect('login')
+                # check for representative
+                try:
+                    rep_user = HealthCareRepresentative.objects.get(username = username)
+                    print(rep_user.first_name + ' ' + rep_user.last_name)
+                except HealthCareRepresentative.DoesNotExist:
+                    print("Invalid rep username")
 
-            try:
-                dis_user = Distributer.objects.get(username = username)
-            except Distributer.DoesNotExist:
-                print("Invalid distributor username")
-                return redirect('login')
+                    # check for distributer
+                    try:
+                        dis_user = Distributer.objects.get(username = username)
+                    except Distributer.DoesNotExist:
+                        print("Invalid distributor username")
     else:
         form = LoginForm()
     return render(request,'login.html', {'form':form})
