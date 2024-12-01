@@ -1,0 +1,20 @@
+from django.contrib import admin
+from .models import *
+# Register your models here.
+admin.site.register(Allergy)
+admin.site.register(AssociatedIllnesses)
+admin.site.register(Browsing)
+admin.site.register(Customer)
+admin.site.register(CustomerEmail)
+admin.site.register(CustomerPhone)
+admin.site.register(Distributer)
+admin.site.register(HealthCareRepresentative)
+admin.site.register(Ingredient)
+admin.site.register(InsuranceCoverage)
+admin.site.register(InsurancePlan)
+admin.site.register(Inventory)
+admin.site.register(Medication)
+admin.site.register(Prescription)
+admin.site.register(PrescriptionOrder)
+admin.site.register(RepresentativeEmail)
+admin.site.register(RepresentativePhone)

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+    <h1>THIS IS THE HOMEPAGE RUNNING FROM TEMPLATES</h1>
+    <!--Check if there is a user logged in -->
+    {% if  logged_in %}
+        <p>User: {{logged_in}}</p>
+        <form method = "post" action = "/logout/">
+            {% csrf_token%}
+            <!--Log out of the account -->
+            <button type="submit">Logout</button> 
+        </form>
+    <!--If there is no user logged in -->
+    {% else %}
+        <a href="login/">Click here for login</a>
+    {% endif %}
+</body>
+</html>

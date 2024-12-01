@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load django_bootstrap5 %}
+<head>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <meta charset="UTF-8">
+    <title>LOGIN</title>
+</head>
+<body>
+<H1>User Login</H1>
+<a href="/signup">Don't have an account?</a>
+    <form method = "post">
+        {% csrf_token%}
+        {% bootstrap_form form %}
+        {% bootstrap_button button_type="submit" content="LOG IN" %}
+    </form>
+</body>
+</html>
