@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+    <h1>this is the distributor page</h1>
+    {% if  logged_in %}
+        <p>User: {{logged_in}}</p>
+        <p>utype: {{user_type}}</p>
+        <form method = "post" action = "/logout/">
+            {% csrf_token%}
+            <!--Log out of the account -->
+            <button type="submit">Logout</button> 
+        </form>
+    {% endif %}
+</body>
+</html>

@@ -27,7 +27,8 @@ def login(request):
 
                 # https://www.tutorialspoint.com/django/django_sessions.htm
                 request.session['username'] = form_username # save the customer username for the home page
-                return redirect('home') # Redirect to the home site
+                request.session['usertype'] = 1
+                return redirect('user') # Redirect to the home site
             
             except Customer.DoesNotExist:
                 print("Invalid customer username")
@@ -36,12 +37,18 @@ def login(request):
                 try:
                     rep_user = HealthCareRepresentative.objects.get(username = form_username)
                     print(rep_user.first_name + ' ' + rep_user.last_name)
+                    request.session['username'] = form_username
+                    request.session['usertype'] = 2
+                    return redirect('healthrep')
                 except HealthCareRepresentative.DoesNotExist:
                     print("Invalid rep username")
 
                     # check for distributer
                     try:
                         dis_user = Distributer.objects.get(username = form_username)
+                        request.session['username'] = form_username
+                        request.session['usertype'] = 3
+                        return redirect('distrib')
                     except Distributer.DoesNotExist:
                         print("Invalid distributor username")
     else:
@@ -63,3 +70,12 @@ def signup(request):
     else:
         form = SignupForm()
     return render(request,'signup.html', {'form':form})
+
+def user(request):
+    return render(request, 'user.html',{'logged_in': request.session.get('username', default = None)})
+
+def distrib(request):
+    return render(request, 'distrib.html',{'logged_in': request.session.get('username', default = None), 'user_type': request.session.get('usertype', default=0)})
+
+def healthrep(request):
+    return render(request, 'healthrep.html',{'logged_in': request.session.get('username', default = None)})
