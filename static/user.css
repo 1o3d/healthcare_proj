@@ -19,7 +19,7 @@ body, html {
 
 .tabcontent {
     color:black;
-    display: none;
+    display: grid;
     height: 100%;
     flex:5;
 }
@@ -36,19 +36,32 @@ body, html {
 }
 
 .mainpane {
-    display: contents;
-    height:100%
+    flex:6;
+    display: flex;
+    height: 100%
+}
+
+.leftstore {
+    order: 1;
+    float: left;
+    height: 80%;
 }
 
 .storefront {
+    order: 2;
     background-color:lightgrey;
-    width:80%;
     height: 80%;
-    margin: 0 auto;
-    padding: 10px;
-    position: relative;
     overflow-y: scroll;
+    float:left;
 }
+
+.rightstore {
+    order: 3;
+    height: 80%;
+    float:left;
+}
+
+
 
 #Store {background-color: grey;}
 #Settings {background-color: lightgrey};
