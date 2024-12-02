@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{% static 'user.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'pills-bottle.ico' %}"/>
     <title>Online Pharmacy</title>
 </head>
 <body>
@@ -18,11 +19,9 @@
         </div>
         <div class="mainpane">
             <div id="Store" class="tabcontent">
-                <h3><center>Store</center></h3>
                 <div class="leftstore">
                 </div>
                 <div class="storefront">
-                    this will be the store panel
                 </div>
                 <div class="rightstore">
                 </div>
@@ -45,7 +44,7 @@
                 tabcon[i].style.display = "none";
             }
 
-            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).style.display = "grid";
         }
         document.getElementById("default").click();
     </script>
