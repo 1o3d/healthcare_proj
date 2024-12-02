@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{% static 'user.css' %}">
-    <title>Home</title>
+    <title>Online Pharmacy</title>
 </head>
 <body>
     <!-- learned how to do tabs from w3schools.com -->
@@ -13,14 +13,15 @@
 
     <div class="container"> 
         <div class="sidebar">
-            <div>
-                <button class="tab" id="default" onclick="getTab('Store', this)">Store</button>
-                <button class="tab" onclick="getTab('Settings', this)">Settings</button>
-            </div>
+            <button class="tab" id="default" onclick="getTab('Store', this)">Store</button>
+            <button class="tab" onclick="getTab('Settings', this)">Settings</button>
         </div>
         <div class="mainpane">
             <div id="Store" class="tabcontent">
                 <h3>Store</h3>
+                <div class="storefront">
+                    this will be the store pane
+                </div>
             </div>
             <div id="Settings" class="tabcontent">
                 <h3>Settings</h3>

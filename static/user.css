@@ -20,6 +20,8 @@ body, html {
 .tabcontent {
     color:black;
     display: none;
+    height: 100%;
+    flex:5;
 }
 
 .container {
@@ -30,11 +32,22 @@ body, html {
 .sidebar {
     flex: 1;
     background-color:lightblue;
+    height:100%
 }
 
 .mainpane {
-    flex: 5;
-    background-color:grey;
+    display: contents;
+    height:100%
+}
+
+.storefront {
+    background-color:lightgrey;
+    width:80%;
+    height: 80%;
+    margin: 0 auto;
+    padding: 10px;
+    position: relative;
+    overflow-y: scroll;
 }
 
 #Store {background-color: grey;}
