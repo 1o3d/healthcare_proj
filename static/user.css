@@ -8,7 +8,7 @@ body, html {
     padding: 14px 16px;
     cursor: pointer;
     outline: none;
-    border: none;
+    border: 2px solid black;
     float: left;
     color: black;
 }
@@ -37,23 +37,25 @@ body, html {
 .tabcontent {  
     height:100%;
     width:100%;
-    grid-template-columns: 2fr 8fr 1fr;
+    grid-template-columns: 3fr 8fr 1fr;
     grid-template-rows: 1fr 6fr 1fr;
 }
 
 .leftstore {
     grid-column: 1;
     grid-row: 2;
+    display: grid;
+    grid-template-columns: 1fr 9fr 1fr;
+    grid-template-rows: 1fr 15fr 1fr;
 }
 
 .storefront {
-    display:block;
     grid-column: 2;
     grid-row: 2;
     background-color:lightgrey;
     overflow-y: scroll;
     padding: 10px;
-    height: 100%;
+    height: 70vh;
     max-height: 100%;
     width: 100%;
     border: 3px solid black;
@@ -64,6 +66,18 @@ body, html {
     grid-row: 2;
 }
 
+.storetitle {
+    grid-row: 1;
+    grid-column: 2;
+}
+
+.storesettings {
+    padding: 35px 20px 35px 20px;
+    border: 3px solid black;
+    background-color: white;
+    grid-column: 2;
+    grid-row: 2;
+}
 
 
 #Store {background-color: grey;}
