@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .forms import *
 from .models import *
+from django.contrib import messages
+
 # Create your views here.
 def view_pharm(request):
     return HttpResponse('Hello World')
@@ -20,7 +22,9 @@ def login(request):
             form_password = form.cleaned_data['password']
 
             # check for customer first
+
             try:
+                invalidCred = False
                  # https://docs.djangoproject.com/en/5.1/topics/db/queries/
                 cust_user = Customer.objects.get(username = form_username)   # Syntax: <variable name> = <model name>.objects.get(<dbcolumn=value>)
                 print(cust_user.first_name + ' ' + cust_user.last_name) # used for testing
@@ -31,16 +35,19 @@ def login(request):
                 return redirect('user') # Redirect to the home site
             
             except Customer.DoesNotExist:
+                messages.error(request, 'Invalid username or password')
                 print("Invalid customer username")
 
                 # check for representative
                 try:
+                    # invalidCred = False
                     rep_user = HealthCareRepresentative.objects.get(username = form_username)
                     print(rep_user.first_name + ' ' + rep_user.last_name)
                     request.session['username'] = form_username
                     request.session['usertype'] = 2
                     return redirect('healthrep')
                 except HealthCareRepresentative.DoesNotExist:
+                    # invalidCred = True
                     print("Invalid rep username")
 
                     # check for distributer
@@ -50,9 +57,14 @@ def login(request):
                         request.session['usertype'] = 3
                         return redirect('distrib')
                     except Distributer.DoesNotExist:
+                        invalidCred = True
                         print("Invalid distributor username")
     else:
         form = LoginForm()
+
+    # if invalidCred:
+    #     messages.error(request, "Incorrect Username/Password")
+
     return render(request,'login.html', {'form':form})
 
 # A simple log out request. Reference: https://www.tutorialspoint.com/django/django_sessions.htm
