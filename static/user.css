@@ -80,6 +80,9 @@ body, html {
     overflow-y: scroll;
     height: 70vh;
 }
+.cust_clicky {
+
+}
 
 
 #Store {background-color: grey;}

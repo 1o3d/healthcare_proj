@@ -31,8 +31,10 @@
                         <h3>Customer List</h3>
                         <ul>
                             {% for customer in customers %}
-                                <p>{{ customer }}</p>
-{#                                <p>{{ customer.name }}</p>#}
+                                <li class = "cust_clicky" onclick="fetchCustomerDetails({{ customer.id }})" style="cursor: pointer;">
+                                    {{ customer }}
+                                </li>
+                                <br>
                             {% empty %}
                                 {{ customers }}
                                 <p>No customers found.</p>
@@ -69,7 +71,7 @@
         }
         document.getElementById("default").click();
     </script>
-<form method = "post" action = "/logout/">
+        <form method = "post" action = "/logout/">
             {% csrf_token%}
             <!--Log out of the account -->
             <button type="submit">Logout</button>
