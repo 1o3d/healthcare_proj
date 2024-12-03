@@ -14,8 +14,15 @@
 
     <div class="container"> 
         <div class="sidebar">
-            <button class="tab" id="default" onclick="getTab('Store', this)">Store</button>
-            <button class="tab" onclick="getTab('Settings', this)">Settings</button>
+            <button class="tab" class="storetab"id="default" onclick="getTab('Store', this)">Store</button>
+            <div class="tabspacer"></div>
+            <button class="tab" class="settingtab" onclick="getTab('Settings', this)">Settings</button>
+            <form method = "post" action = "/logout/">
+                {% csrf_token%}
+                <!--Log out of the account -->
+                <button type="submit" class="tab" class="logouttab">Logout</button>
+            </form>
+            
         </div>
         <div class="mainpane">
             <div id="Store" class="tabcontent">
