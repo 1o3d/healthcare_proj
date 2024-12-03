@@ -1,18 +1,79 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'user.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'pills-bottle.ico' %}"/>
+    <title>Online Pharmacy</title>
 </head>
 <body>
-    <h1>this is the healthcare rep page</h1>
-    {% if  logged_in %}
+    <!-- learned how to do tabs from w3schools.com -->
+    <!-- https://www.w3schools.com/howto/howto_js_full_page_tabs.asp-->
+
+
+    <div class="container">
+        <div class="sidebar">
+            <button class="tab" id="default" onclick="getTab('Store', this)">Store</button>
+            <button class="tab" onclick="getTab('Settings', this)">Settings</button>
+        </div>
+        <div class="mainpane">
+            {% if  logged_in %}
         <p>User: {{logged_in}}</p>
-        <form method = "post" action = "/logout/">
+            {% endif %}
+
+
+            <div id="Store" class="tabcontent">
+                <div class="storetitle"><center><h2>Customer Details</h2></center></div>
+                <div class="leftstore">
+
+                    <div class="storesettings">
+                        <h3>Customer List</h3>
+                        <ul>
+                            {% for customer in customers %}
+                                <p>{{ customer }}</p>
+{#                                <p>{{ customer.name }}</p>#}
+                            {% empty %}
+                                {{ customers }}
+                                <p>No customers found.</p>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="storefront" id="customerDetails">
+
+    <p>Select a customer to view their details here.</p>
+</div>
+                <div class="rightstore">
+                </div>
+            </div>
+            <div id="Settings" class="tabcontent">
+                <h3>Settings</h3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getTab(tabName, e) {
+            var i, tabcon, tablinks;
+            tabcon = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcon.length; i++) {
+                tabcon[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tabcon.length; i++) {
+                tabcon[i].style.display = "none";
+            }
+
+            document.getElementById(tabName).style.display = "grid";
+        }
+        document.getElementById("default").click();
+    </script>
+<form method = "post" action = "/logout/">
             {% csrf_token%}
             <!--Log out of the account -->
-            <button type="submit">Logout</button> 
+            <button type="submit">Logout</button>
         </form>
-    {% endif %}
+
 </body>
 </html>

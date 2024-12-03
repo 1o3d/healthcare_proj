@@ -90,4 +90,9 @@ def distrib(request):
     return render(request, 'distrib.html',{'logged_in': request.session.get('username', default = None), 'user_type': request.session.get('usertype', default=0)})
 
 def healthrep(request):
-    return render(request, 'healthrep.html',{'logged_in': request.session.get('username', default = None)})
+    cust = Customer.objects.all()
+    context = {'logged_in': request.session.get('username', default = None),
+               'customers': cust,
+               }
+
+    return render(request, 'healthrep.html',context)
