@@ -18,6 +18,9 @@
             <button class="tab" onclick="getTab('Settings', this)">Settings</button>
         </div>
         <div class="mainpane">
+            {% if  logged_in %}
+        <p>User: {{logged_in}}</p>
+            {% endif %}
             <div id="Store" class="tabcontent">
                 <div class="storetitle"><center><h2>Storefront</h2></center></div>
                 <div class="leftstore">
@@ -60,6 +63,11 @@
         }
         document.getElementById("default").click();
     </script>
+<form method = "post" action = "/logout/">
+            {% csrf_token%}
+            <!--Log out of the account -->
+            <button type="submit">Logout</button>
+        </form>
 
 </body>
 </html>
