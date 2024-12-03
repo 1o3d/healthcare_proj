@@ -36,6 +36,17 @@ class Browsing(models.Model):
         managed = False
         db_table = 'Browsing'
 
+class HealthCareRepresentative(models.Model):
+    username = models.CharField(db_column='Username', primary_key= True, blank=True, null=False, max_length=100)  # Field name made lowercase. The composite primary key (Username, Cust Healthcare ID) found, that is not supported. The first column is selected.
+    first_name = models.CharField(db_column='First Name', max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    last_name = models.CharField(db_column='Last Name', max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    password = models.CharField(db_column='Password', max_length=100)  # Field name made lowercase.
+    age = models.IntegerField(db_column='Age')  # Field name made lowercase.
+    address = models.CharField(db_column='Address', blank=True, null=True, max_length=200)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Health Care Representative'
 
 class Customer(models.Model):
     alberta_healthcare_id = models.CharField(db_column='Alberta Healthcare ID', primary_key=True, blank=True, null=False, max_length=10)  # Field name made lowercase. Field renamed to remove unsuitable characters.
@@ -45,19 +56,39 @@ class Customer(models.Model):
     password = models.CharField(db_column='Password', max_length=100)  # Field name made lowercase.
     age = models.IntegerField(db_column='Age', blank=True, null=True)  # Field name made lowercase.
     address = models.CharField(db_column='Address', blank=True, null=True, max_length=200)  # Field name made lowercase.
+    healthcare_rep = models.ForeignKey(
+        "testapp.HealthCareRepresentative",
+        on_delete = models.SET_NULL,
+        db_column = 'Health Rep',
+        null = True,
+        blank = True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Customer'
 
 
 class CustomerEmail(models.Model):
-    alberta_healthcare_id = models.OneToOneField(Customer, models.DO_NOTHING, db_column='Alberta Healthcare ID', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters. The composite primary key (Alberta Healthcare ID, Cust_Email) found, that is not supported. The first column is selected.
-    cust_email = models.CharField(db_column='Cust_Email', blank=True, null=True, max_length=100)  # Field name made lowercase.
+    alberta_healthcare_id = models.ForeignKey(
+        "testapp.Customer", 
+        on_delete=models.CASCADE, 
+        db_column='Alberta Healthcare ID')  # Field name made lowercase. Field renamed to remove unsuitable characters. The composite primary key (Alberta Healthcare ID, Cust_Email) found, that is not supported. The first column is selected.
+    cust_email = models.CharField(
+        db_column='Cust_Email', 
+        blank=True, 
+        primary_key= True,
+        null=False, 
+        max_length=100)  # Field name made lowercase.-
 
     class Meta:
         managed = False
         db_table = 'Customer Email'
+        # necessary to ensure that we can have a unqiue combination of emails attached to customers
+        constraints = [
+            models.UniqueConstraint(
+                fields=['alberta_healthcare_id', 'cust_email'], name='email_primary_key'
+            )
+        ]
 
 
 class CustomerPhone(models.Model):
@@ -78,20 +109,6 @@ class Distributer(models.Model):
     class Meta:
         managed = False
         db_table = 'Distributer'
-
-
-class HealthCareRepresentative(models.Model):
-    username = models.CharField(db_column='Username', primary_key=True, blank=True, null=False, max_length=100)  # Field name made lowercase. The composite primary key (Username, Cust Healthcare ID) found, that is not supported. The first column is selected.
-    cust_healthcare_id = models.ForeignKey(Customer, models.DO_NOTHING, db_column='Cust Healthcare ID', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    first_name = models.CharField(db_column='First Name', max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    last_name = models.CharField(db_column='Last Name', max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    password = models.CharField(db_column='Password', max_length=100)  # Field name made lowercase.
-    age = models.IntegerField(db_column='Age')  # Field name made lowercase.
-    address = models.CharField(db_column='Address', blank=True, null=True, max_length=200)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'Health Care Representative'
 
 
 class Ingredient(models.Model):
