@@ -45,7 +45,7 @@ def login(request):
 
                     # check for distributer
                     try:
-                        dis_user = Distributer.objects.get(username = form_username)
+                        dist_user = Distributer.objects.get(username = form_username)
                         request.session['username'] = form_username
                         request.session['usertype'] = 3
                         return redirect('distrib')

@@ -62,10 +62,6 @@ class Customer(models.Model):
         db_column = 'Health Rep',
         null = True,
         blank = True)
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 
     class Meta:
         managed = True
@@ -115,21 +111,6 @@ class Distributer(models.Model):
         db_table = 'Distributer'
 
 
-<<<<<<< Updated upstream
-=======
-class HealthCareRepresentative(models.Model):
-    username = models.CharField(db_column='Username', primary_key=True, blank=True, null=False, max_length=100)  # Field name made lowercase. The composite primary key (Username, Cust Healthcare ID) found, that is not supported. The first column is selected.    first_name = models.CharField(db_column='First Name', max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    last_name = models.CharField(db_column='Last Name', max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    password = models.CharField(db_column='Password', max_length=100)  # Field name made lowercase.
-    age = models.IntegerField(db_column='Age')  # Field name made lowercase.
-    address = models.CharField(db_column='Address', blank=True, null=True, max_length=200)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'Health Care Representative'
-
-
->>>>>>> Stashed changes
 class Ingredient(models.Model):
     iupac_name = models.CharField(db_column='IUPAC Name', primary_key=True, blank=True, null=False,max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     common_name = models.TextField(db_column='Common Name')  # Field name made lowercase. Field renamed to remove unsuitable characters. This field type is a guess.

@@ -1,22 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'distrib.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'pills-bottle.ico' %}"/>
+    <title>Online Pharmacy</title>
 </head>
 <body>
-<<<<<<< Updated upstream
-    <h1>this is the distributor page</h1>
-    {% if  logged_in %}
-        <p>User: {{logged_in}}</p>
-        <p>utype: {{user_type}}</p>
-        <form method = "post" action = "/logout/">
-            {% csrf_token%}
-            <!--Log out of the account -->
-            <button type="submit">Logout</button> 
-        </form>
-    {% endif %}
-=======
     <!-- learned how to do tabs from w3schools.com -->
     <!-- https://www.w3schools.com/howto/howto_js_full_page_tabs.asp-->
 
@@ -39,14 +30,6 @@
                 <div class="leftstore">
                     <div class="distribmeds">
                         <center>Your Products</center>
-                        a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                        a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                        a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                        a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                        a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                        a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                        a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                        a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
                     </div>
                 </div>
                 <div class="storefront">
@@ -85,6 +68,8 @@
         document.getElementById("default").click();
     </script>
 
->>>>>>> Stashed changes
 </body>
 </html>
+
+
+
