@@ -1,7 +1,10 @@
 {% load static %}
+{% load django_bootstrap5 %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{% static 'distrib.css' %}">
     <link rel="shortcut icon" type="image/png" href="{% static 'pills-bottle.ico' %}"/>
@@ -30,6 +33,11 @@
                 <div class="leftstore">
                     <div class="distribmeds">
                         <center>Your Products</center>
+                        {% for medication in meds %}
+                            <li>
+                               <label>{{medication.med_name}}</label> 
+                            </li>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="storefront">
@@ -46,7 +54,12 @@
                 </div>
             </div>
             <div id="Settings" class="tabcontent">
-                <h3>Settings</h3>
+                <h3>Add new medication</h3>
+                <form method="post">
+                    {% csrf_token%}
+                    {% bootstrap_form add_med_form %}
+                    {% bootstrap_button button_type="submit" content="Add medication" %}
+                </form>
             </div>
         </div>
     </div>
