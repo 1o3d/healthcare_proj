@@ -33,6 +33,7 @@
                 <div class="leftstore">
                     <div class="distribmeds">
                         <center>Your Products</center>
+                         <!--For every medication associated with the distributer, list it. -->
                         {% for medication in meds %}
                             <li>
                                <label>{{medication.med_name}}</label> 
@@ -53,7 +54,7 @@
                 <div class="rightstore">
                 </div>
             </div>
-            <div id="Settings" class="tabcontent">
+            <div id="Add_Meds" class="tabcontent">
                 <h3>Add new medication</h3>
                 <form method="post">
                     {% csrf_token%}
