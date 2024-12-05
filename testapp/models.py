@@ -142,25 +142,45 @@ class InsurancePlan(models.Model):
         managed = False
         db_table = 'Insurance Plan'
 
+class Medication(models.Model):
+    med_name = models.CharField(db_column='Med Name', primary_key=True, blank=True, null=False, max_length=100)   
+    distributer_id = models.ForeignKey(
+    Distributer, 
+    models.DO_NOTHING,
+    db_column='Distributer ID', 
+    blank=True, 
+    null=True)  
+
+    class Meta:
+        managed = False
+        db_table = 'Medication'
+        constraints = [
+            models.UniqueConstraint(fields=['med_name', 'distributer_id'], name='comp_key_med')
+        ]
 
 class Inventory(models.Model):
     inv_id = models.AutoField(db_column='Inv ID', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     pharmacy_location = models.CharField(db_column='Pharmacy Location', max_length=200)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    amount_left = models.IntegerField(db_column='Amount Left')  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    amount_left = models.IntegerField(db_column='Amount Left')  
+    med_name = models.ForeignKey(
+        "testapp.Medication", 
+        db_column='Med Name', 
+        on_delete=models.DO_NOTHING,
+        null = True,
+        blank = True)
+    Dist_id = models.ForeignKey(
+        "testapp.Distributer", 
+        db_column='Distributer ID', 
+        on_delete=models.CASCADE,
+        null = True,
+        blank = True)
 
     class Meta:
         managed = False
         db_table = 'Inventory'
 
 
-class Medication(models.Model):
-    med_name = models.CharField(db_column='Med Name', primary_key=True, blank=True, null=False, max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters. The composite primary key (Med Name, Distributer ID) found, that is not supported. The first column is selected.
-    distributer_id = models.ForeignKey(Distributer, models.DO_NOTHING, db_column='Distributer ID', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    inv_id = models.ForeignKey(Inventory, models.DO_NOTHING, db_column='Inv ID', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
 
-    class Meta:
-        managed = False
-        db_table = 'Medication'
 
 
 class Prescription(models.Model):
