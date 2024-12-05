@@ -19,7 +19,7 @@
         <div class="sidebar">
             <button class="tab" class="storetab" id="default" onclick="getTab('Store', this)">Manage/View Medicines</button>
             <div class="tabspacer"></div>
-            <button class="tab" class="settingtab" onclick="getTab('Settings', this)">Add New Medicines</button>
+            <button class="tab" class="add_meds_tab" onclick="getTab('Add_Meds', this)">Add New Medicines</button>
             <form method = "post" action="/logout/">
                 {% csrf_token%}
                 <!--Log out of the account -->
