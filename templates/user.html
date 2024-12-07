@@ -4,17 +4,98 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{% static 'user.css' %}">
-    <title>Home</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'pills-bottle.ico' %}"/>
+    <title>Online Pharmacy</title>
 </head>
 <body>
-    <h1>this is the user page</h1>
-    {% if  logged_in %}
-        <p>User: {{logged_in}}</p>
-        <form method = "post" action = "/logout/">
+    <!-- learned how to do tabs from w3schools.com -->
+    <!-- https://www.w3schools.com/howto/howto_js_full_page_tabs.asp-->
+
+
+    <div class="container"> 
+        <div class="sidebar">
+            <button class="tab" id="default" onclick="getTab('Store', this)">Store</button>
+            <button class="tab" onclick="getTab('Allergies', this)">Allergies</button>
+            <button class="tab" onclick="getTab('Insurance', this)">Insurance</button>
+            <button class="tab" onclick="getTab('Prescriptions', this)">Prescriptions</button>
+        </div>
+        <div class="mainpane">
+            <div id="Store" class="tabcontent">
+                <div class="storetitle"><center><h2>Storefront</h2></center></div>
+                <div class="leftstore">
+                    <div class="storesettings">
+                        <center>Store Search</center>
+                    </div>
+                </div>
+                <div class="storefront">
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                </div>
+                <div class="rightstore">
+                </div>
+            </div>
+            <div id="Allergies" class="tabcontent">
+                <div class="addallrdiv">
+                    <h3>Allergies tab</h3>
+                    Add New Allergy<br>
+                    Symptoms:
+                    <input type="text" id="prestypeinput" class="ptypein"><br>
+                    Ingredient:
+                    <select class="ingrselect"></select>
+                    <button class="addallr">Submit</button> 
+                </div>
+                
+            </div>
+            <div id="Insurance" class="tabcontent">
+                <div class="addallrdiv">
+                    <h3>Insurance Tab</h3>
+                    Add New Insurance Plan<br>
+                    Coverage Type:
+                    <input type="text" id="insurancetypeinput" class="instypein">
+                    <button class="addcov">Submit</button> 
+                </div>
+            </div>
+            <div id="Prescriptions" class="tabcontent">
+                <div class="addpresdiv">
+                    <h3>Prescriptions tab</h3>
+                    Add New Prescription: 
+                    <input type="text" id="prestypeinput" class="ptypein">
+                    <button class="addpres">Submit</button> 
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getTab(tabName, e) {
+            var i, tabcon, tablinks;
+            tabcon = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcon.length; i++) {
+                tabcon[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tabcon.length; i++) {
+                tabcon[i].style.display = "none";
+            }
+
+            document.getElementById(tabName).style.display = "grid";
+        }
+        document.getElementById("default").click();
+    </script>
+<form method = "post" action = "/logout/">
             {% csrf_token%}
             <!--Log out of the account -->
-            <button type="submit">Logout</button> 
+            <button type="submit">Logout</button>
         </form>
-    {% endif %}
+
 </body>
 </html>
+
+
