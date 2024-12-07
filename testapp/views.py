@@ -52,7 +52,7 @@ def login(request):
 
                     # check for distributer
                     try:
-                        dis_user = Distributer.objects.get(username = form_username)
+                        dist_user = Distributer.objects.get(username = form_username)
                         request.session['username'] = form_username
                         request.session['usertype'] = 3
                         return redirect('distrib')
@@ -69,7 +69,7 @@ def login(request):
 
 # A simple log out request. Reference: https://www.tutorialspoint.com/django/django_sessions.htm
 def logging_out(request):
-    del request.session['username'] # delete the sessions cookies
+    request.session.flush() # delete the sessions cookies
     return redirect('home') # redirect to the main page
 
 # Reference: https://docs.djangoproject.com/en/5.1/topics/forms/modelforms/
@@ -87,7 +87,25 @@ def user(request):
     return render(request, 'user.html',{'logged_in': request.session.get('username', default = None)})
 
 def distrib(request):
-    return render(request, 'distrib.html',{'logged_in': request.session.get('username', default = None), 'user_type': request.session.get('usertype', default=0)})
+    # grab the distributer data
+    dist_user = Distributer.objects.get(username = request.session['username'])
+    # grab the medications associated with that distributer
+    dist_medications = Medication.objects.filter(distributer_id = dist_user.distributer_id)
+    if request.method == 'POST':
+        form = MedForm(request.POST)
+        if form.is_valid():
+            # https://docs.djangoproject.com/en/5.1/topics/forms/modelforms/#:~:text=If%20you%20call%20save(),on%20the%20resulting%20model%20instance.
+            # The form is created but not saved, we still need to input the dist id attribute
+            medication = form.save(commit=False)
+            # Although it's a foreign key of type CHAR. This is actually asking for a distributer to be assigned to.
+            medication.distributer_id = dist_user
+            medication.save() #Add the medication
+         
+    else:
+        form = MedForm()
+    # send over the re;evant medications for render
+    return render(request, 'distrib.html',{'logged_in': request.session.get('username', default = None), 'meds':dist_medications,'add_med_form':form})
+
 
 def healthrep(request):
     rep = request.session.get('username', default=None)
