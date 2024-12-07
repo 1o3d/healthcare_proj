@@ -157,8 +157,15 @@ class Medication(models.Model):
         ]
 
 class MedicationIngredients(models.Model):
+    med_ing_id = models.AutoField(db_column= 'Combination ID', primary_key=True)
     med_name = models.ForeignKey('Medication', to_field = 'med_name', db_column='Med Name', on_delete=models.CASCADE)
     iupac_name = models.ForeignKey('Ingredient',to_field = 'iupac_name', db_column='IUPAC name', on_delete=models.CASCADE)
+    distributer_id = models.ForeignKey(
+        Distributer, 
+        models.DO_NOTHING,
+        db_column='Distributer ID', 
+        blank=True, 
+        null=True)
 
     class Meta:
         db_table = 'Medication_ingredients' 

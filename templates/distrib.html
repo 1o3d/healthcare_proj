@@ -60,34 +60,26 @@
                             </tr> 
                         {% endfor %}
                     </table>
-                    <table id ="ingredients_table">
-                        <!-- https://www.w3schools.com/tags/tag_td.asp -->
-                        <tr class = "inv_row">
-                            <th class = "inv_cell">Ingredients</th>
-                            <th class = "inv_cell"></th>
-                            <th class = "inv_cell"></th>
-                            <th class = "inv_cell"></th>
-                        </tr>
-                        <!--For every inventory associated with the distributer, create a row. -->
-                        {% for inventory in inventories %}
-                            <tr class = "inv_row">
-                                <td class = "inv_cell">second table</td>
-                                <td class = "inv_cell">{{inventory.pharmacy_location}}</td>
-                                <td class = "inv_cell">{{inventory.unit_price}}</td>
-                                <td class = "inv_cell">{{inventory.amount_left}}</td>
-                            </tr> 
-                        {% endfor %}
-                    </table>
+                    <div id ="ingredients_list">
+                        <h5>Add new Ingredient</h5>
+                        <form method="post">
+                            {% csrf_token%}
+                            {% bootstrap_form add_ing_form %}
+                            {% bootstrap_button button_type="submit" content="Add Ingredient" %}
+                        </form>
+                        <h5>Current Ingredients</h5>
+                        <!--For every ingredient associated with the selected medication, create a row. -->
+                        {% for Ingredient in med_ingredients %}
+                        <li>
+                           <button class = "med_button" >{{Ingredient.iupac_name}}</button> 
+                        </li>
+                    {% endfor %}
+                    </div>
                 </div>
                 <div class="rightstore">
                 </div>
                 <div class = "interactive_view">
-                    <h3>Add new Ingredient</h3>
-                <form method="post">
-                    {% csrf_token%}
-                    {% bootstrap_form add_ing_form %}
-                    {% bootstrap_button button_type="submit" content="Add Ingredient" %}
-                </form>
+       
                 </div>
             </div>
             <div id="Add_Meds" class="tabcontent">
@@ -118,17 +110,17 @@
         }
         //https://www.geeksforgeeks.org/how-to-find-out-if-an-element-is-hidden-with-javascript/
         function toggleIngredients() {
-            ingredients_tab = document.getElementById("ingredients_table");
+            ingredients_tab = document.getElementById("ingredients_list");
             store_tab = document.getElementById("store_table");
-            if(ingredients_tab.style.visibility === "hidden")
+            if(ingredients_tab.style.display === "none")
             {
-                ingredients_tab.style.visibility = "visible";
-                store_tab.style.visibility = "hidden";
+                ingredients_tab.style.display = "block";
+                store_tab.style.display = "none";
             }
             else
             {
-                ingredients_tab.style.visibility = "hidden";
-                store_tab.style.visibility = "visible";
+                ingredients_tab.style.display = "none";
+                store_tab.style.display = "block";
             }
         }
         document.getElementById("default").click();

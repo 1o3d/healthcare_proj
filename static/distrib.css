@@ -100,15 +100,13 @@ body, html {
 #store_table {
     width: 100%;
     max-height: 100%;
-    border: 3px solid black;
-    visibility: visible;
+    display: block;
 }
 
-#ingredients_table {
+#ingredients_list {
     width: 100%;
     max-height: 100%;
-    border: 3px solid black;
-    visibility: hidden;
+    display: none;
 }
 
 .inv_cell {
