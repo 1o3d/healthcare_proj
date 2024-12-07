@@ -19,5 +19,5 @@ class MedForm(ModelForm):
 class IngredientForm(ModelForm):
     class Meta:
         model = MedicationIngredients
-        fields = "__all__"
+        fields = ['iupac_name']
 

@@ -36,13 +36,13 @@
                          <!--For every medication associated with the distributer, list it. -->
                         {% for medication in meds %}
                             <li>
-                               <button class = "med_button" onclick = >{{medication.med_name}}</button> 
+                               <button class = "med_button" onclick = "toggleIngredients()">{{medication.med_name}}</button> 
                             </li>
                         {% endfor %}
                     </div>
                 </div>
                 <div class = "storefront">
-                    <table class="store_table">
+                    <table id ="store_table">
                         <!-- https://www.w3schools.com/tags/tag_td.asp -->
                         <tr class = "inv_row">
                             <th class = "inv_cell">Medication</th>
@@ -60,11 +60,29 @@
                             </tr> 
                         {% endfor %}
                     </table>
+                    <table id ="ingredients_table">
+                        <!-- https://www.w3schools.com/tags/tag_td.asp -->
+                        <tr class = "inv_row">
+                            <th class = "inv_cell">Ingredients</th>
+                            <th class = "inv_cell"></th>
+                            <th class = "inv_cell"></th>
+                            <th class = "inv_cell"></th>
+                        </tr>
+                        <!--For every inventory associated with the distributer, create a row. -->
+                        {% for inventory in inventories %}
+                            <tr class = "inv_row">
+                                <td class = "inv_cell">second table</td>
+                                <td class = "inv_cell">{{inventory.pharmacy_location}}</td>
+                                <td class = "inv_cell">{{inventory.unit_price}}</td>
+                                <td class = "inv_cell">{{inventory.amount_left}}</td>
+                            </tr> 
+                        {% endfor %}
+                    </table>
                 </div>
                 <div class="rightstore">
                 </div>
                 <div class = "interactive_view">
-                    <h3>Add new medication</h3>
+                    <h3>Add new Ingredient</h3>
                 <form method="post">
                     {% csrf_token%}
                     {% bootstrap_form add_ing_form %}
@@ -97,6 +115,21 @@
             }
 
             document.getElementById(tabName).style.display = "grid";
+        }
+        //https://www.geeksforgeeks.org/how-to-find-out-if-an-element-is-hidden-with-javascript/
+        function toggleIngredients() {
+            ingredients_tab = document.getElementById("ingredients_table");
+            store_tab = document.getElementById("store_table");
+            if(ingredients_tab.style.visibility === "hidden")
+            {
+                ingredients_tab.style.visibility = "visible";
+                store_tab.style.visibility = "hidden";
+            }
+            else
+            {
+                ingredients_tab.style.visibility = "hidden";
+                store_tab.style.visibility = "visible";
+            }
         }
         document.getElementById("default").click();
     </script>

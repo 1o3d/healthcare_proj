@@ -158,13 +158,13 @@ class Medication(models.Model):
 
 class MedicationIngredients(models.Model):
     med_name = models.ForeignKey('Medication', to_field = 'med_name', db_column='Med Name', on_delete=models.CASCADE)
-    ingredient = models.ForeignKey('Ingredient',to_field = 'iupac_name', db_column='IUPAC name', on_delete=models.CASCADE)
+    iupac_name = models.ForeignKey('Ingredient',to_field = 'iupac_name', db_column='IUPAC name', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'Medication_ingredients' 
         managed = False  
         constraints = [
-            models.UniqueConstraint(fields=['med_name', 'ingredient'], name='comp_key_contents')
+            models.UniqueConstraint(fields=['med_name', 'iupac_name'], name='comp_key_contents')
         ]
   
 class Inventory(models.Model):
