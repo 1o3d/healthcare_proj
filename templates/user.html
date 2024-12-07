@@ -4,17 +4,73 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="{% static 'user.css' %}">
-    <title>Home</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'pills-bottle.ico' %}"/>
+    <title>Online Pharmacy</title>
 </head>
 <body>
-    <h1>this is the user page</h1>
-    {% if  logged_in %}
+    <!-- learned how to do tabs from w3schools.com -->
+    <!-- https://www.w3schools.com/howto/howto_js_full_page_tabs.asp-->
+
+
+    <div class="container"> 
+        <div class="sidebar">
+            <button class="tab" id="default" onclick="getTab('Store', this)">Store</button>
+            <button class="tab" onclick="getTab('Settings', this)">Settings</button>
+        </div>
+        <div class="mainpane">
+            {% if  logged_in %}
         <p>User: {{logged_in}}</p>
-        <form method = "post" action = "/logout/">
+            {% endif %}
+            <div id="Store" class="tabcontent">
+                <div class="storetitle"><center><h2>Storefront</h2></center></div>
+                <div class="leftstore">
+                    <div class="storesettings">
+                        <center>Store Search</center>
+                    </div>
+                </div>
+                <div class="storefront">
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                </div>
+                <div class="rightstore">
+                </div>
+            </div>
+            <div id="Settings" class="tabcontent">
+                <h3>Settings</h3>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function getTab(tabName, e) {
+            var i, tabcon, tablinks;
+            tabcon = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcon.length; i++) {
+                tabcon[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tabcon.length; i++) {
+                tabcon[i].style.display = "none";
+            }
+
+            document.getElementById(tabName).style.display = "grid";
+        }
+        document.getElementById("default").click();
+    </script>
+<form method = "post" action = "/logout/">
             {% csrf_token%}
             <!--Log out of the account -->
-            <button type="submit">Logout</button> 
+            <button type="submit">Logout</button>
         </form>
-    {% endif %}
+
 </body>
 </html>
+
+
+
