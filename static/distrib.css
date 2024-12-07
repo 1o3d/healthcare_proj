@@ -73,6 +73,7 @@ body, html {
     grid-row: 2;
     background-color:lightgrey;
     overflow-y: scroll;
+    border-spacing: 50px;
     padding: 10px;
     height: 70vh;
     max-height: 100%;
@@ -81,6 +82,13 @@ body, html {
     display: grid;
 }
 
+.inv_cell {
+    border: 1px solid black;
+    padding-right: 5px;
+}
+.inv_row {
+    justify-content:space-evenly 
+}
 .rightstore {
     grid-column: 3;
     grid-row: 2;

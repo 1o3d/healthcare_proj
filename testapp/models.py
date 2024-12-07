@@ -161,6 +161,7 @@ class Medication(models.Model):
 class Inventory(models.Model):
     inv_id = models.AutoField(db_column='Inv ID', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     pharmacy_location = models.CharField(db_column='Pharmacy Location', max_length=200)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    unit_price = models.DecimalField(max_digits=6, decimal_places=2, db_column = 'Unit Price') # use to represent price
     amount_left = models.IntegerField(db_column='Amount Left')  
     med_name = models.ForeignKey(
         "testapp.Medication", 
@@ -168,7 +169,7 @@ class Inventory(models.Model):
         on_delete=models.DO_NOTHING,
         null = True,
         blank = True)
-    Dist_id = models.ForeignKey(
+    distributer_id = models.ForeignKey(
         "testapp.Distributer", 
         db_column='Distributer ID', 
         on_delete=models.CASCADE,

@@ -79,6 +79,8 @@ def distrib(request):
     dist_user = Distributer.objects.get(username = request.session['username'])
     # grab the medications associated with that distributer
     dist_medications = Medication.objects.filter(distributer_id = dist_user.distributer_id)
+    # grab every inventory that stores medication that this distributor has supplied.
+    dist_inventories = Inventory.objects.filter(distributer_id = dist_user.distributer_id)
     if request.method == 'POST':
         form = MedForm(request.POST)
         if form.is_valid():
@@ -92,7 +94,13 @@ def distrib(request):
     else:
         form = MedForm()
     # send over the re;evant medications for render
-    return render(request, 'distrib.html',{'logged_in': request.session.get('username', default = None), 'meds':dist_medications,'add_med_form':form})
+    return render(request,'distrib.html',
+        {
+            'logged_in': request.session.get('username', default = None), 
+            'meds':dist_medications,
+            'add_med_form':form,
+            'inventories':dist_inventories
+        })
 
 
 def healthrep(request):

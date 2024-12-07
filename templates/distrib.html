@@ -41,16 +41,24 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="storefront">
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                </div>
+                <table class="storefront">
+                    <!-- https://www.w3schools.com/tags/tag_td.asp -->
+                    <tr class = "inv_row">
+                        <th class = "inv_cell">Medication</th>
+                        <th class = "inv_cell">Pharmacy Location</th>
+                        <th class = "inv_cell">Per Unit Price ($)</th>
+                        <th class = "inv_cell">Units remaining</th>
+                    </tr>
+                    <!--For every inventory associated with the distributer, create a row. -->
+                    {% for inventory in inventories %}
+                        <tr class = "inv_row">
+                            <td class = "inv_cell">{{inventory.med_name.med_name}}</td>
+                            <td class = "inv_cell">{{inventory.pharmacy_location}}</td>
+                            <td class = "inv_cell">{{inventory.unit_price}}</td>
+                            <td class = "inv_cell">{{inventory.amount_left}}</td>
+                        </tr> 
+                    {% endfor %}
+                </table>
                 <div class="rightstore">
                 </div>
             </div>
