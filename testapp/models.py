@@ -210,17 +210,14 @@ class PrescriptionOrder(models.Model):
 
 class RepresentativeEmail(models.Model):
     rep_username = models.OneToOneField(HealthCareRepresentative, models.DO_NOTHING, db_column='Rep Username', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters. The composite primary key (Rep Username, Cust Healthcare ID, Rep Email) found, that is not supported. The first column is selected.
-    cust_healthcare_id = models.ForeignKey(Customer, models.DO_NOTHING, db_column='Cust Healthcare ID', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     rep_email = models.CharField(db_column='Rep Email', blank=True, null=True, max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters.
 
     class Meta:
         managed = False
         db_table = 'Representative Email'
 
-
 class RepresentativePhone(models.Model):
     rep_username = models.OneToOneField(HealthCareRepresentative, models.DO_NOTHING, db_column='Rep Username', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters. The composite primary key (Rep Username, Cust Healthcare ID, Rep Phone#) found, that is not supported. The first column is selected.
-    cust_healthcare_id = models.ForeignKey(Customer, models.DO_NOTHING, db_column='Cust Healthcare ID', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     rep_phone_field = models.CharField(db_column='Rep Phone#', blank=True, null=True, max_length=12)  # Field name made lowercase. Field renamed to remove unsuitable characters. Field renamed because it ended with '_'.
 
     class Meta:
