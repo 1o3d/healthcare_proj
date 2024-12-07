@@ -36,30 +36,40 @@
                          <!--For every medication associated with the distributer, list it. -->
                         {% for medication in meds %}
                             <li>
-                               <label>{{medication.med_name}}</label> 
+                               <button class = "med_button" onclick = >{{medication.med_name}}</button> 
                             </li>
                         {% endfor %}
                     </div>
                 </div>
-                <table class="storefront">
-                    <!-- https://www.w3schools.com/tags/tag_td.asp -->
-                    <tr class = "inv_row">
-                        <th class = "inv_cell">Medication</th>
-                        <th class = "inv_cell">Pharmacy Location</th>
-                        <th class = "inv_cell">Per Unit Price ($)</th>
-                        <th class = "inv_cell">Units remaining</th>
-                    </tr>
-                    <!--For every inventory associated with the distributer, create a row. -->
-                    {% for inventory in inventories %}
+                <div class = "storefront">
+                    <table class="store_table">
+                        <!-- https://www.w3schools.com/tags/tag_td.asp -->
                         <tr class = "inv_row">
-                            <td class = "inv_cell">{{inventory.med_name.med_name}}</td>
-                            <td class = "inv_cell">{{inventory.pharmacy_location}}</td>
-                            <td class = "inv_cell">{{inventory.unit_price}}</td>
-                            <td class = "inv_cell">{{inventory.amount_left}}</td>
-                        </tr> 
-                    {% endfor %}
-                </table>
+                            <th class = "inv_cell">Medication</th>
+                            <th class = "inv_cell">Pharmacy Location</th>
+                            <th class = "inv_cell">Per Unit Price ($)</th>
+                            <th class = "inv_cell">Units remaining</th>
+                        </tr>
+                        <!--For every inventory associated with the distributer, create a row. -->
+                        {% for inventory in inventories %}
+                            <tr class = "inv_row">
+                                <td class = "inv_cell">{{inventory.med_name.med_name}}</td>
+                                <td class = "inv_cell">{{inventory.pharmacy_location}}</td>
+                                <td class = "inv_cell">{{inventory.unit_price}}</td>
+                                <td class = "inv_cell">{{inventory.amount_left}}</td>
+                            </tr> 
+                        {% endfor %}
+                    </table>
+                </div>
                 <div class="rightstore">
+                </div>
+                <div class = "interactive_view">
+                    <h3>Add new medication</h3>
+                <form method="post">
+                    {% csrf_token%}
+                    {% bootstrap_form add_ing_form %}
+                    {% bootstrap_button button_type="submit" content="Add Ingredient" %}
+                </form>
                 </div>
             </div>
             <div id="Add_Meds" class="tabcontent">
@@ -70,6 +80,7 @@
                     {% bootstrap_button button_type="submit" content="Add medication" %}
                 </form>
             </div>
+
         </div>
     </div>
 

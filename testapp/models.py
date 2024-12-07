@@ -113,9 +113,7 @@ class Distributer(models.Model):
 
 class Ingredient(models.Model):
     iupac_name = models.CharField(db_column='IUPAC Name', primary_key=True, blank=True, null=False,max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    common_name = models.TextField(db_column='Common Name')  # Field name made lowercase. Field renamed to remove unsuitable characters. This field type is a guess.
-    med_name = models.ForeignKey('Medication', models.DO_NOTHING, db_column='Med Name', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    distributer_id = models.ForeignKey(Distributer, models.DO_NOTHING, db_column='Distributer ID', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    common_name = models.CharField(db_column='Common Name', null=True, blank=True, max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters. This field type is a guess.
 
     class Meta:
         managed = False
@@ -145,11 +143,11 @@ class InsurancePlan(models.Model):
 class Medication(models.Model):
     med_name = models.CharField(db_column='Med Name', primary_key=True, blank=True, null=False, max_length=100)   
     distributer_id = models.ForeignKey(
-    Distributer, 
-    models.DO_NOTHING,
-    db_column='Distributer ID', 
-    blank=True, 
-    null=True)  
+        Distributer, 
+        models.DO_NOTHING,
+        db_column='Distributer ID', 
+        blank=True, 
+        null=True)
 
     class Meta:
         managed = False
@@ -158,6 +156,17 @@ class Medication(models.Model):
             models.UniqueConstraint(fields=['med_name', 'distributer_id'], name='comp_key_med')
         ]
 
+class MedicationIngredients(models.Model):
+    med_name = models.ForeignKey('Medication', to_field = 'med_name', db_column='Med Name', on_delete=models.CASCADE)
+    ingredient = models.ForeignKey('Ingredient',to_field = 'iupac_name', db_column='IUPAC name', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'Medication_ingredients' 
+        managed = False  
+        constraints = [
+            models.UniqueConstraint(fields=['med_name', 'ingredient'], name='comp_key_contents')
+        ]
+  
 class Inventory(models.Model):
     inv_id = models.AutoField(db_column='Inv ID', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     pharmacy_location = models.CharField(db_column='Pharmacy Location', max_length=200)  # Field name made lowercase. Field renamed to remove unsuitable characters.

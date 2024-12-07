@@ -21,6 +21,15 @@ body, html {
     grid-row:2;
 }
 
+.med_button {
+    background-color: transparent;
+    border: none;
+}
+
+.med_button:hover {
+    background-color: lightgray;
+    border: none;
+}
 .tabspacer {
     grid-row:3;
 }
@@ -60,6 +69,13 @@ body, html {
     grid-template-rows: 1fr 6fr 1fr;
 }
 
+.interactive_view {
+    display: block;
+    background-color: aqua;
+    grid-column: 2;
+    grid-row: 3;
+}
+
 .leftstore {
     grid-column: 1;
     grid-row: 2;
@@ -79,12 +95,21 @@ body, html {
     max-height: 100%;
     width: 100%;
     border: 3px solid black;
-    display: grid;
 }
 
+.store_table {
+    width: 100%;
+    max-height: 100%;
+    border: 3px solid black;
+}
+.store_table thead {
+    position: sticky;
+    width: 100%;
+}
 .inv_cell {
     border: 1px solid black;
     padding-right: 5px;
+    height: 5vh;
 }
 .inv_row {
     justify-content:space-evenly 
