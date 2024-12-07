@@ -90,9 +90,45 @@ def distrib(request):
     return render(request, 'distrib.html',{'logged_in': request.session.get('username', default = None), 'user_type': request.session.get('usertype', default=0)})
 
 def healthrep(request):
-    cust = Customer.objects.all()
+    rep = request.session.get('username', default=None)
+    repInstance = HealthCareRepresentative.objects.get(username=rep)
+    customer_id = None
+    cust = Customer.objects.filter(healthcare_rep = rep)
+    successString =''
+    if request.method == 'POST':
+        if 'unlink_customer' in request.POST:
+            customer_user = request.POST.get('customer_user')
+
+            try:
+                customer_to_unlink = Customer.objects.get(username=customer_user, healthcare_rep=repInstance)
+                customer_to_unlink.healthcare_rep = None
+                customer_to_unlink.save()
+                messages.success(request, "Customer unlinked successfully.")
+
+            except Customer.DoesNotExist:
+                messages.error(request, "Customer not found or unauthorized unlink attempt.")
+        form = LinkCustForm(request.POST)
+        if form.is_valid():
+            form_ABID = form.cleaned_data['AB_id']
+            form_Fname = form.cleaned_data['Fname']
+            form_Lname = form.cleaned_data['Lname']
+            try:
+                Cust = Customer.objects.get(alberta_healthcare_id=form_ABID, first_name=form_Fname, last_name=form_Lname)
+                Cust.healthcare_rep = repInstance
+                Cust.save()
+                messages.success(request, 'Customer added successfully')
+                form = LinkCustForm()
+            except Customer.DoesNotExist:
+                messages.error(request, "Customer doesn't exist")
+
+    else:
+        form = LinkCustForm()
+
     context = {'logged_in': request.session.get('username', default = None),
                'customers': cust,
+               'rep': rep,
+               'form': form,
+              'customer_id':customer_id
                }
 
-    return render(request, 'healthrep.html',context)
+    return render(request, 'healthrep.html', context)

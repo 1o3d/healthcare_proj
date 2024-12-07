@@ -11,3 +11,12 @@ class SignupForm(ModelForm):
         model = Customer
         fields = "__all__"
 
+class AddCustRepForm(ModelForm):
+    class Meta:
+        model = Customer
+        exclude = ["password", "healthcare_rep"]
+
+class LinkCustForm(forms.Form):
+    AB_id = forms.CharField(required=True, max_length=10)
+    Fname = forms.CharField(max_length=100, required=True)
+    Lname = forms.CharField(max_length=100, required=True)

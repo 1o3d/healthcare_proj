@@ -11,10 +11,10 @@
 <body>
   <H1>REGISTRATION</H1>
   <form method="post">
-    {% csrf_token%}
+    {% csrf_token %}
     {% bootstrap_form form %}
     {% bootstrap_button button_type="submit" content="Register Account" %}
       <a href="/distrib/">Are you a distributer?</a>
-  </form>
+
 </body>
 </html>

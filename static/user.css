@@ -83,7 +83,15 @@ body, html {
 .cust_clicky {
 
 }
-
+.custcontent {
+    grid-column: 1;
+    grid-row: 2;
+    background-color:lightblue;
+}
+.table td {
+    padding: 10px;
+}
 
 #Store {background-color: grey;}
 #Settings {background-color: lightgrey};
+#Customer {background-color: lightgrey};
