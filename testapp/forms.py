@@ -11,7 +11,6 @@ class SignupForm(ModelForm):
         model = Customer
         fields = "__all__"
 
-<<<<<<< HEAD
 class AddCustRepForm(ModelForm):
     class Meta:
         model = Customer
@@ -21,10 +20,8 @@ class LinkCustForm(forms.Form):
     AB_id = forms.CharField(required=True, max_length=10)
     Fname = forms.CharField(max_length=100, required=True)
     Lname = forms.CharField(max_length=100, required=True)
-=======
 class MedForm(ModelForm):
     class Meta:
         model = Medication
         fields = ['med_name']
 
->>>>>>> main
