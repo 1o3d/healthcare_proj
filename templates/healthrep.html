@@ -33,7 +33,7 @@
                         <h3>Customer List</h3>
                         <ul>
                             {% for customer in customers %}
-                                <li class = "cust_clicky" onclick="fetchCustomerDetails({{ customer.id }})" style="cursor: pointer;">
+                                <li class = "cust_clicky" onclick="fetchCustomerDetails('{{ customer.username }}')" style="cursor: pointer;">
                                     {{ customer }}
                                 </li>
                                 <br>
@@ -45,10 +45,8 @@
                     </div>
                 </div>
                 <div class="storefront" id="customerDetails">
-
-    <p>Select a customer to view their details here.</p>
-
-</div>
+                    <p>Select a customer to view their details here.</p>
+                </div>
                 <div class="rightstore">
                 </div>
             </div>
@@ -157,6 +155,37 @@
             document.getElementById(tabName).style.display = "grid";
         }
         document.getElementById("default").click();
+
+        function fetchCustomerDetails(customer_username) {
+    fetch(`/customer/${customer_username}/`)
+        .then(response => response.json())
+        .then(data => {
+            let allergiesContent = "No allergies!";
+            if (data.allergies && data.allergies.length > 0) {
+                allergiesContent = data.allergies
+                    .map(iupac_name => `<li>${data.allergies.iupac_name}</li>`)
+                    .join(""); // Convert the list to HTML
+                allergiesContent = `<ul>${allergiesContent}</ul>`;
+            }
+            const detailsDiv = document.getElementById("customerDetails");
+            detailsDiv.innerHTML = `
+                <h3>Customer Details</h3>
+                <p><strong>Healthcare ID:</strong> ${data.healthcare_id}</p>
+                <p><strong>First Name:</strong> ${data.first_name}</p>
+                <p><strong>Last Name:</strong> ${data.last_name}</p>
+
+                <p><strong>Phone number:</strong> ${data.phone}</p>
+                <p><strong>Email:</strong> ${data.email}</p>
+{#                <p><strong>Allergies:</strong> ${aller}</p>#}
+                <p><strong>Insurance plan:</strong> ${data.custInsurance}</p>
+            `;
+        })
+        .catch(error => {
+            console.error("Error fetching customer details:", error);
+            const detailsDiv = document.getElementById("customerDetails");
+            detailsDiv.innerHTML = `<p>Error loading customer details. Please try again.</p>`;
+        });
+}
     </script>
         <form method = "post" action = "/logout/">
             {% csrf_token%}

@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, JsonResponse
 from .forms import *
 from .models import *
 from django.contrib import messages
@@ -132,3 +132,48 @@ def healthrep(request):
                }
 
     return render(request, 'healthrep.html', context)
+
+def customer_details(request, customer_username):
+    custHealthID = Customer.objects.get(username=customer_username).alberta_healthcare_id
+    customer = get_object_or_404(Customer, username=customer_username)
+
+    try:
+        custPhone = CustomerPhone.objects.get(alberta_healthcare_id=custHealthID).cust_phone_field
+    except CustomerPhone.DoesNotExist:
+        custPhone = "No phone number provided"
+
+    try:
+        custEmail = CustomerEmail.objects.get(alberta_healthcare_id=custHealthID).cust_email
+    except CustomerEmail.DoesNotExist:
+        custEmail = "No email provided"
+
+    allergies = Allergy.objects.filter(cust_healthcare_id=custHealthID).select_related('ingredient_id')
+
+    # If no allergies are found
+    if not allergies.exists():
+        custAllergies = {"message": "No allergies! :)"}
+    else:
+        custAllergies = [
+            {
+                "iupac_name": allergy.ingredient_id.iupac_name,
+                "common_name": allergy.ingredient_id.common_name
+            }
+            for allergy in allergies
+        ]
+
+    try:
+        custInsurance = InsurancePlan.objects.get(cust_healthcare_id=custHealthID).health_insurance_field
+    except InsurancePlan.DoesNotExist:
+        custInsurance = 'No insurance plan'
+
+    data = {
+        "first_name": customer.first_name,
+        "last_name": customer.last_name,
+        "phone": custPhone,
+        "email": custEmail,
+        "allergies": custAllergies,
+        "healthcare_id": customer.alberta_healthcare_id,
+        "insurance_plan": custInsurance,
+
+    }
+    return JsonResponse(data)
