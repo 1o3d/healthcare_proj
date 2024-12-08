@@ -84,7 +84,30 @@ def signup(request):
     return render(request,'signup.html', {'form':form})
 
 def user(request):
-    return render(request, 'user.html',{'logged_in': request.session.get('username', default = None)})
+    ingredients = Ingredient.objects.all()
+    returnstruct = {
+        'logged_in': request.session.get('username', default = None),
+        'ingredients': ingredients
+    }
+    return render(request, 'user.html',returnstruct)
+
+def user_create_allergy(request):
+    ingredients = Ingredient.objects.all()
+    returnstruct = {
+        'logged_in': request.session.get('username', default = None),
+        'ingredients': ingredients
+    }
+    cust_id = Customer.objects.get(username = request.session['username'])
+    if request.method == "POST":
+        symptoms_text = request.POST.get('sympinp')
+        ingredients_input_id = request.POST.get('ingrinput')
+        print("symptoms_text = " + symptoms_text)
+        print("ingredients_input_id = " + ingredients_input_id)
+        if symptoms_text and ingredients_input_id:
+            ingredients_id = Ingredient.objects.get(iupac_name=ingredients_input_id)
+            Allergy.objects.create(symptoms=symptoms_text,cust_healthcare_id=cust_id,ingredient_id=ingredients_id)
+    return redirect('user')
+
 
 def distrib(request):
     # grab the distributer data
@@ -217,3 +240,6 @@ def customer_details(request, customer_username):
 
     }
     return JsonResponse(data)
+
+
+    

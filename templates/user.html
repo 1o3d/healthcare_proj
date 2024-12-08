@@ -15,20 +15,11 @@
     <div class="container"> 
         <div class="sidebar">
             <button class="tab" id="default" onclick="getTab('Store', this)">Store</button>
-<<<<<<< HEAD
             <button class="tab" onclick="getTab('Allergies', this)">Allergies</button>
             <button class="tab" onclick="getTab('Insurance', this)">Insurance</button>
             <button class="tab" onclick="getTab('Prescriptions', this)">Prescriptions</button>
         </div>
         <div class="mainpane">
-=======
-            <button class="tab" onclick="getTab('Settings', this)">Settings</button>
-        </div>
-        <div class="mainpane">
-            {% if  logged_in %}
-        <p>User: {{logged_in}}</p>
-            {% endif %}
->>>>>>> main
             <div id="Store" class="tabcontent">
                 <div class="storetitle"><center><h2>Storefront</h2></center></div>
                 <div class="leftstore">
@@ -50,15 +41,21 @@
                 </div>
             </div>
             <div id="Allergies" class="tabcontent">
-                <div class="addallrdiv">
+                <form method="post" class="addallrdiv" action="/user_create_allergy/">
+                    {% csrf_token %}
                     <h3>Allergies tab</h3>
                     Add New Allergy<br>
                     Symptoms:
-                    <input type="text" id="prestypeinput" class="ptypein"><br>
+                    <input type="text" name="sympinp" class="ptypein"><br>
                     Ingredient:
-                    <select class="ingrselect"></select>
+                    <select class="ingrselect" name="ingrinput">
+                        <option value="" selected disabled hidden>Select an ingredient</option>
+                        {% for ingredient in ingredients %}
+                            <option value="{{ ingredient.iupac_name }}">{{ ingredient.common_name }}</option>
+                        {% endfor %}
+                    </select>
                     <button class="addallr">Submit</button> 
-                </div>
+                </form>
                 
             </div>
             <div id="Insurance" class="tabcontent">
@@ -73,8 +70,15 @@
             <div id="Prescriptions" class="tabcontent">
                 <div class="addpresdiv">
                     <h3>Prescriptions tab</h3>
-                    Add New Prescription: 
+                    Add New Prescription:<br>
+                    Medicine Name:
                     <input type="text" id="prestypeinput" class="ptypein">
+                    <br>
+                    Prescription Amount (Dosage):
+                    <input type="text" id="presamountinput" class="ptypein"> 
+                    <br>
+                    Refill Date:
+                    <input type="date" id="presrefilldate" class="ptypein">
                     <button class="addpres">Submit</button> 
                 </div>
                 
@@ -108,7 +112,3 @@
 </html>
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> main

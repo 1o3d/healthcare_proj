@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Customer, Medication, MedicationIngredients
+from .models import Customer, Medication, MedicationIngredients, Allergy
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100, required=True)
