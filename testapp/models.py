@@ -67,6 +67,9 @@ class Customer(models.Model):
         managed = True
         db_table = 'Customer'
 
+    def __str__(self):
+        return self.first_name + self.last_name
+
 
 class CustomerEmail(models.Model):
     alberta_healthcare_id = models.ForeignKey(

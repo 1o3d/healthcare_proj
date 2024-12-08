@@ -11,5 +11,6 @@ urlpatterns = [
     path('signup/', views.signup, name = 'signup'),
     path('user/', views.user, name = 'user'),
     path('healthrep/', views.healthrep, name = 'healthrep'),
-    path('distrib/', views.distrib, name = 'distrib')
+    path('distrib/', views.distrib, name = 'distrib'),
+    path('customer/<str:customer_username>/', views.customer_details, name='customer_details')
 ]

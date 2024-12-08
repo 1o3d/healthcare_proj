@@ -1,7 +1,9 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, JsonResponse
 from .forms import *
 from .models import *
+from django.contrib import messages
+
 # Create your views here.
 def view_pharm(request):
     return HttpResponse('Hello World')
@@ -20,7 +22,9 @@ def login(request):
             form_password = form.cleaned_data['password']
 
             # check for customer first
+
             try:
+                invalidCred = False
                  # https://docs.djangoproject.com/en/5.1/topics/db/queries/
                 cust_user = Customer.objects.get(username = form_username)   # Syntax: <variable name> = <model name>.objects.get(<dbcolumn=value>)
                 print(cust_user.first_name + ' ' + cust_user.last_name) # used for testing
@@ -31,16 +35,19 @@ def login(request):
                 return redirect('user') # Redirect to the home site
             
             except Customer.DoesNotExist:
+                messages.error(request, 'Invalid username or password')
                 print("Invalid customer username")
 
                 # check for representative
                 try:
+                    # invalidCred = False
                     rep_user = HealthCareRepresentative.objects.get(username = form_username)
                     print(rep_user.first_name + ' ' + rep_user.last_name)
                     request.session['username'] = form_username
                     request.session['usertype'] = 2
                     return redirect('healthrep')
                 except HealthCareRepresentative.DoesNotExist:
+                    # invalidCred = True
                     print("Invalid rep username")
 
                     # check for distributer
@@ -50,9 +57,14 @@ def login(request):
                         request.session['usertype'] = 3
                         return redirect('distrib')
                     except Distributer.DoesNotExist:
+                        invalidCred = True
                         print("Invalid distributor username")
     else:
         form = LoginForm()
+
+    # if invalidCred:
+    #     messages.error(request, "Incorrect Username/Password")
+
     return render(request,'login.html', {'form':form})
 
 # A simple log out request. Reference: https://www.tutorialspoint.com/django/django_sessions.htm
@@ -118,4 +130,90 @@ def distrib(request):
 
 
 def healthrep(request):
-    return render(request, 'healthrep.html',{'logged_in': request.session.get('username', default = None)})
+    rep = request.session.get('username', default=None)
+    repInstance = HealthCareRepresentative.objects.get(username=rep)
+    customer_id = None
+    cust = Customer.objects.filter(healthcare_rep = rep)
+    successString =''
+    if request.method == 'POST':
+        if 'unlink_customer' in request.POST:
+            customer_user = request.POST.get('customer_user')
+
+            try:
+                customer_to_unlink = Customer.objects.get(username=customer_user, healthcare_rep=repInstance)
+                customer_to_unlink.healthcare_rep = None
+                customer_to_unlink.save()
+                messages.success(request, "Customer unlinked successfully.")
+
+            except Customer.DoesNotExist:
+                messages.error(request, "Customer not found or unauthorized unlink attempt.")
+        form = LinkCustForm(request.POST)
+        if form.is_valid():
+            form_ABID = form.cleaned_data['AB_id']
+            form_Fname = form.cleaned_data['Fname']
+            form_Lname = form.cleaned_data['Lname']
+            try:
+                Cust = Customer.objects.get(alberta_healthcare_id=form_ABID, first_name=form_Fname, last_name=form_Lname)
+                Cust.healthcare_rep = repInstance
+                Cust.save()
+                messages.success(request, 'Customer added successfully')
+                form = LinkCustForm()
+            except Customer.DoesNotExist:
+                messages.error(request, "Customer doesn't exist")
+
+    else:
+        form = LinkCustForm()
+
+    context = {'logged_in': request.session.get('username', default = None),
+               'customers': cust,
+               'rep': rep,
+               'form': form,
+              'customer_id':customer_id
+               }
+
+    return render(request, 'healthrep.html', context)
+
+def customer_details(request, customer_username):
+    custHealthID = Customer.objects.get(username=customer_username).alberta_healthcare_id
+    customer = get_object_or_404(Customer, username=customer_username)
+
+    try:
+        custPhone = CustomerPhone.objects.get(alberta_healthcare_id=custHealthID).cust_phone_field
+    except CustomerPhone.DoesNotExist:
+        custPhone = "No phone number provided"
+
+    try:
+        custEmail = CustomerEmail.objects.get(alberta_healthcare_id=custHealthID).cust_email
+    except CustomerEmail.DoesNotExist:
+        custEmail = "No email provided"
+
+    allergies = Allergy.objects.filter(cust_healthcare_id=custHealthID).select_related('ingredient_id')
+
+    # If no allergies are found
+    if not allergies.exists():
+        custAllergies = {"message": "No allergies! :)"}
+    else:
+        custAllergies = [
+            {
+                "iupac_name": allergy.ingredient_id.iupac_name,
+                "common_name": allergy.ingredient_id.common_name
+            }
+            for allergy in allergies
+        ]
+
+    try:
+        custInsurance = InsurancePlan.objects.get(cust_healthcare_id=custHealthID).health_insurance_field
+    except InsurancePlan.DoesNotExist:
+        custInsurance = 'No insurance plan'
+
+    data = {
+        "first_name": customer.first_name,
+        "last_name": customer.last_name,
+        "phone": custPhone,
+        "email": custEmail,
+        "allergies": custAllergies,
+        "healthcare_id": customer.alberta_healthcare_id,
+        "insurance_plan": custInsurance,
+
+    }
+    return JsonResponse(data)

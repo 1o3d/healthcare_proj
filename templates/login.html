@@ -10,10 +10,18 @@
 <body>
 <H1>User Login</H1>
 <a href="/signup">Don't have an account?</a>
+
     <form method = "post">
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         {% csrf_token%}
         {% bootstrap_form form %}
-        {% bootstrap_button button_type="submit" content="LOG IN" %}
+        {% bootstrap_button button_type="submit" content="Log in" %}
     </form>
 </body>
 </html>
