@@ -20,6 +20,7 @@
             <button class="tab" class="storetab" id="default" onclick="getTab('Store', this)">Manage/View Medicines</button>
             <div class="tabspacer"></div>
             <button class="tab" class="add_meds_tab" onclick="getTab('Add_Meds', this)">Add New Medicines</button>
+            <button class="tab" class="add_ingredients_tab" onclick="getTab('Add_Ingredients', this)">Add New Ingredients</button>
             <form method = "post" action="/logout/">
                 {% csrf_token%}
                 <!--Log out of the account -->
@@ -64,7 +65,7 @@
                         <h5 id = "add_new_ingredients_header"></h5>
                         <form method="post">
                             {% csrf_token%}
-                            {% bootstrap_form add_ing_form %}
+                            {% bootstrap_form add_med_ing_form %}
 
                              <!-- This field is required for the database -->
                             <input id="form_med_name" name="med_name" type="hidden" value = "">
@@ -75,7 +76,7 @@
                         <h5 id = "current_ingredients_header"></h5>
                         <!--For every ingredient associated with the selected medication, create a row. -->
                         {% for Ingredient in med_ingredients %}
-                            <button class = "ing_button" value = "{{Ingredient.iupac_name}}" style = "display: none">{{Ingredient.iupac_name}}</button> 
+                            <p><button class = "ing_button" value = "{{Ingredient.iupac_name}}" style = "display: none">{{Ingredient.iupac_name}}</button></p> 
                         {% endfor %}
                     </div>
                 </div>
@@ -91,6 +92,14 @@
                     {% csrf_token%}
                     {% bootstrap_form add_med_form %}
                     {% bootstrap_button button_type="submit" content="Add medication" %}
+                </form>
+            </div>
+            <div id="Add_Ingredients" class="tabcontent">
+                <h3>Add new ingredient</h3>
+                <form method="post">
+                    {% csrf_token%}
+                    {% bootstrap_form add_ing_form %}
+                    {% bootstrap_button button_type="submit" content="Add ingredient to Database" %}
                 </form>
             </div>
 

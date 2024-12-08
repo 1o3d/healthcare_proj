@@ -103,6 +103,7 @@ def distrib(request):
     if request.method == 'POST':
         med_form = MedForm(request.POST)
         ing_form = IngredientForm(request.POST)
+        med_ing_form = MedicationIngredientForm(request.POST)
         if med_form.is_valid():
             # https://docs.djangoproject.com/en/5.1/topics/forms/modelforms/#:~:text=If%20you%20call%20save(),on%20the%20resulting%20model%20instance.
             # The form is created but not saved, we still need to input the dist id attribute
@@ -110,14 +111,17 @@ def distrib(request):
             # Although it's a foreign key of type CHAR. This is actually asking for a distributer to be assigned to.
             medication.distributer_id = dist_user
             medication.save() #Add the medication
-
         elif ing_form.is_valid():
-            medication_ingredient = ing_form.save(commit=False)
+            ing_form.save()
+
+        elif med_ing_form.is_valid():
+            medication_ingredient = med_ing_form.save(commit=False)
             medication_ingredient.distributer_id = dist_user
             medication_ingredient.save()
     else:
         med_form = MedForm()
         ing_form = IngredientForm()
+        med_ing_form = MedicationIngredientForm()
     # send over the re;evant medications for render
     return render(request,'distrib.html',
         {
@@ -125,6 +129,7 @@ def distrib(request):
             'meds':dist_medications,
             'add_med_form':med_form,
             'add_ing_form':ing_form,
+            'add_med_ing_form':med_ing_form,
             'inventories':dist_inventories,
             'med_ingredients':list(med_ingredients)
         })
