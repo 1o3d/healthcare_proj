@@ -92,6 +92,19 @@ body, html {
     padding: 10px;
 }
 
+.addpresdiv {
+    width: 500px;
+}
+
+.addpres {
+    width: 55px;
+    height: 20px;
+}
+
+.ingrselect {
+    width: 300px;
+}
+
 #Store {background-color: grey;}
 #Settings {background-color: lightgrey};
 #Customer {background-color: lightgrey};
