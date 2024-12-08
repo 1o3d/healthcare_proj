@@ -94,7 +94,7 @@ def distrib(request):
     # grab every inventory that stores medication that this distributor has supplied.
     dist_inventories = Inventory.objects.filter(distributer_id = dist_user.distributer_id)
     # medication ingrediants
-    med_ingredients = MedicationIngredients.objects.filter(med_name__in = dist_medications)
+    med_ingredients = MedicationIngredients.objects.filter(med_name__in = dist_medications).values('med_name','iupac_name')
 
     # filter medication ingredients further using a get request:
     #selected_med = request.GET.get('medication')
@@ -111,8 +111,10 @@ def distrib(request):
             medication.distributer_id = dist_user
             medication.save() #Add the medication
 
-        if ing_form.is_valid():
-            ing_form.save()
+        elif ing_form.is_valid():
+            medication_ingredient = ing_form.save(commit=False)
+            medication_ingredient.distributer_id = dist_user
+            medication_ingredient.save()
     else:
         med_form = MedForm()
         ing_form = IngredientForm()
@@ -124,8 +126,7 @@ def distrib(request):
             'add_med_form':med_form,
             'add_ing_form':ing_form,
             'inventories':dist_inventories,
-            'med_ingredients':med_ingredients
-            #'selected_med': selected_med
+            'med_ingredients':list(med_ingredients)
         })
 
 

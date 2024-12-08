@@ -28,4 +28,9 @@ class MedForm(ModelForm):
 class IngredientForm(ModelForm):
     class Meta:
         model = MedicationIngredients
-        fields = "__all__"
+        fields = ['med_name','iupac_name']
+
+    med_name = forms.ModelChoiceField(
+        queryset=Medication.objects.all(),  # Grab every medication instance as this is a foreign key reference
+        widget=forms.HiddenInput(),         # Set this to hidden as it would be redundant for the distributer to fill this out
+        required=True)                      # Should be required in order to set a proper relation between Ingredient and Medication
