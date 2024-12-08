@@ -140,6 +140,7 @@
 
     </div>
 
+
     <script>
         function getTab(tabName, e) {
             var i, tabcon, tablinks;
@@ -160,13 +161,13 @@
     fetch(`/customer/${customer_username}/`)
         .then(response => response.json())
         .then(data => {
-            let allergiesContent = "No allergies!";
-            if (data.allergies && data.allergies.length > 0) {
-                allergiesContent = data.allergies
-                    .map(iupac_name => `<li>${data.allergies.iupac_name}</li>`)
-                    .join(""); // Convert the list to HTML
-                allergiesContent = `<ul>${allergiesContent}</ul>`;
-            }
+            {#let allergiesContent = "No allergies!";#}
+            {#if (data.allergies && data.allergies.length > 0) {#}
+            {#    allergiesContent = data.allergies#}
+            {#        .map(iupac_name => `<li>${data.allergies.iupac_name}</li>`)#}
+            {#        .join(""); // Convert the list to HTML#}
+            {#    allergiesContent = `<ul>${allergiesContent}</ul>`;#}
+            {#}#}
             const detailsDiv = document.getElementById("customerDetails");
             detailsDiv.innerHTML = `
                 <h3>Customer Details</h3>
@@ -177,7 +178,8 @@
                 <p><strong>Phone number:</strong> ${data.phone}</p>
                 <p><strong>Email:</strong> ${data.email}</p>
 {#                <p><strong>Allergies:</strong> ${aller}</p>#}
-                <p><strong>Insurance plan:</strong> ${data.custInsurance}</p>
+                <p><strong>Insurance plan:</strong> ${data.insurance_plan}</p>
+                <a href="${customer_username}/edit">Edit customer</a>
             `;
         })
         .catch(error => {
@@ -186,6 +188,23 @@
             detailsDiv.innerHTML = `<p>Error loading customer details. Please try again.</p>`;
         });
 }
+{##}
+{#function editCustomer(customer_username) {#}
+{#    fetch(`/customer/${customer_username}/`)#}
+{#        .then(response => response.json())#}
+{#        .then(data => {#}
+{#            document.getElementById("editCustomerForm").style.display = "block";#}
+{#            document.getElementById("editUsername").value = customer_username;#}
+{#            document.getElementById("editFirstName").value = data.first_name;#}
+{#            document.getElementById("editLastName").value = data.last_name;#}
+{#            document.getElementById("editPhone").value = data.phone;#}
+{#            document.getElementById("editEmail").value = data.email;#}
+{#        })#}
+{#        .catch(error => {#}
+{#            console.error("Error loading customer data for editing:", error);#}
+{#            alert("Error loading customer data. Please try again.");#}
+{#        });#}
+{#}#}
     </script>
         <form method = "post" action = "/logout/">
             {% csrf_token%}

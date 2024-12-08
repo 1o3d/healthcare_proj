@@ -1,7 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import  Customer
-
+from .models import  Customer,Medication, CustomerPhone, CustomerEmail, InsurancePlan
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100, required=True)
     password = forms.CharField(max_length=100, required=True)
@@ -25,3 +24,24 @@ class MedForm(ModelForm):
     class Meta:
         model = Medication
         fields = ['med_name']
+
+class CustomerEditForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['first_name', 'last_name', 'username','address']
+
+class CustPhoneForm(forms.ModelForm):
+    class Meta:
+        model = CustomerPhone
+        fields = ['cust_phone_field']
+
+class CustomerEmailForm(forms.ModelForm):
+    class Meta:
+        model = CustomerEmail
+        fields = ['cust_email']
+
+
+class CustomerInsuranceForm(forms.ModelForm):
+    class Meta:
+        model = InsurancePlan
+        fields = ['coverage_type']
