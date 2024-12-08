@@ -84,19 +84,20 @@ def signup(request):
     return render(request,'signup.html', {'form':form})
 
 def user(request):
+    cust_id = Customer.objects.get(username = request.session['username'])
     ingredients = Ingredient.objects.all()
+    allergies = Allergy.objects.filter(cust_healthcare_id=cust_id)
+    prescriptions = Prescription.objects.filter(cust_healthcare_id=cust_id)
+    insurance = InsurancePlan.objects.filter(cust_healthcare_id=cust_id)
     returnstruct = {
         'logged_in': request.session.get('username', default = None),
-        'ingredients': ingredients
+        'ingredients': ingredients,
+        'allergies': allergies,
+        'prescriptions': prescriptions
     }
     return render(request, 'user.html',returnstruct)
 
 def user_create_allergy(request):
-    ingredients = Ingredient.objects.all()
-    returnstruct = {
-        'logged_in': request.session.get('username', default = None),
-        'ingredients': ingredients
-    }
     cust_id = Customer.objects.get(username = request.session['username'])
     if request.method == "POST":
         symptoms_text = request.POST.get('sympinp')
@@ -108,6 +109,31 @@ def user_create_allergy(request):
             Allergy.objects.create(symptoms=symptoms_text,cust_healthcare_id=cust_id,ingredient_id=ingredients_id)
     return redirect('user')
 
+def user_delete_allergy(request):
+    if request.method == "POST":
+        todelete = request.POST.get('delbutton')
+        print("deleting " + todelete)
+        Allergy.objects.filter(pk=todelete).delete()
+    return redirect('user')
+
+def user_create_pres(request):
+    cust_id = Customer.objects.get(username = request.session['username'])
+    if request.method == "POST":
+        pname = request.POST.get('presnameinput')
+        pdosage = request.POST.get('presamountinput')
+        refdate = request.POST.get('presrefilldate')
+        print("pname = " + pname)
+        print("dosage = " + pdosage)
+        if pname and pdosage and refdate:
+            Prescription.objects.create(cust_healthcare_id=cust_id,prescription_name=pname,refill_date=refdate,dosage=pdosage)
+    return redirect('user')
+
+def user_delete_pres(request):
+    if request.method == "POST":
+        todelete = request.POST.get('presdelbutton')
+        print("deleting " + todelete)
+        Prescription.objects.filter(rx_number=todelete).delete()
+    return redirect('user')
 
 def distrib(request):
     # grab the distributer data

@@ -41,21 +41,39 @@
                 </div>
             </div>
             <div id="Allergies" class="tabcontent">
-                <form method="post" class="addallrdiv" action="/user_create_allergy/">
-                    {% csrf_token %}
+                <div class="allrcontent" >
                     <h3>Allergies tab</h3>
-                    Add New Allergy<br>
-                    Symptoms:
-                    <input type="text" name="sympinp" class="ptypein"><br>
-                    Ingredient:
-                    <select class="ingrselect" name="ingrinput">
-                        <option value="" selected disabled hidden>Select an ingredient</option>
-                        {% for ingredient in ingredients %}
-                            <option value="{{ ingredient.iupac_name }}">{{ ingredient.common_name }}</option>
-                        {% endfor %}
-                    </select>
-                    <button class="addallr">Submit</button> 
-                </form>
+                    <form method="post" class="addallrdiv" action="/user_create_allergy/" style="margin: 10px; border: 2px solid
+                     blue; padding:5px; background-color:lightgray;">
+                        {% csrf_token %}
+                        
+                        Add New Allergy<br>
+                        Symptoms:
+                        <input type="text" name="sympinp" class="ptypein"><br>
+                        Ingredient:
+                        <select class="ingrselect" name="ingrinput">
+                            <option value="" selected disabled hidden>Select an ingredient</option>
+                            {% for ingredient in ingredients %}
+                                <option value="{{ ingredient.iupac_name }}">{{ ingredient.common_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button class="addallr">Submit</button> 
+                    </form>
+                <div>
+                    {% for allergy in allergies %}
+                        <div style="margin:20px; border: 2px solid red; padding:5px; background-color:lightgray;">
+                            Allergy {{ forloop.counter }} <br>
+                            Symptoms: {{ allergy.symptoms }} <br>
+                            Ingredient: {{ allergy.ingredient_id.common_name }}<br>
+                            <form method="post" action="/user_delete_allergy/">
+                                {% csrf_token %}
+                                <button name="delbutton" value="{{ allergy.pk }}">Delete Allergy {{ forloop.counter }}</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+                </div>
+                
                 
             </div>
             <div id="Insurance" class="tabcontent">
@@ -68,19 +86,37 @@
                 </div>
             </div>
             <div id="Prescriptions" class="tabcontent">
-                <div class="addpresdiv">
+                <div class="prescontent">
                     <h3>Prescriptions tab</h3>
-                    Add New Prescription:<br>
-                    Medicine Name:
-                    <input type="text" id="prestypeinput" class="ptypein">
-                    <br>
-                    Prescription Amount (Dosage):
-                    <input type="text" id="presamountinput" class="ptypein"> 
-                    <br>
-                    Refill Date:
-                    <input type="date" id="presrefilldate" class="ptypein">
-                    <button class="addpres">Submit</button> 
+                    <form method="post" class="addpresdiv" action="/user_create_pres/" style="margin: 10px; border: 2px solid
+                     blue; padding:5px; background-color:lightgray;">
+                        {% csrf_token %}
+                        
+                        Add New Prescription:<br>
+                        Medicine Name:
+                        <input type="text" name="presnameinput" class="pnamein">
+                        <br>
+                        Prescription Amount:
+                        <input type="text" name="presamountinput" class="ptypein"> 
+                        <br>
+                        Refill Date:
+                        <input type="date" name="presrefilldate" class="ptypein">
+                        <button class="addpres">Submit</button> 
+                    </form>
+                    {% for prescription in prescriptions %}
+                        <div style="margin:20px; border: 2px solid red; padding:5px; background-color:lightgray;">
+                            Prescription {{ forloop.counter }} <br>
+                            Medicine Name: {{ prescription.prescription_name }} <br>
+                            Prescription Amount: {{ prescription.dosage }} <br>
+                            Refill Date: {{ prescription.refill_date }}<br>
+                            <form method="post" action="/user_delete_pres/">
+                                {% csrf_token %}
+                                <button name="presdelbutton" value="{{ prescription.rx_number }}">Delete Prescription {{ prescription.pk }}</button>
+                            </form>
+                        </div>
+                    {% endfor %}
                 </div>
+                
                 
             </div>
         </div>
