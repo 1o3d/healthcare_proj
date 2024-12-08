@@ -148,6 +148,7 @@ class Medication(models.Model):
         db_column='Distributer ID', 
         blank=True, 
         null=True)
+    needs_prescription = models.IntegerField(db_column='Needs Prescription', null=True, blank = True)
 
     class Meta:
         managed = False
@@ -206,6 +207,12 @@ class Prescription(models.Model):
     dosage = models.IntegerField(db_column='Dosage')  # Field name made lowercase.
     refill_date = models.CharField(db_column='Refill Date', blank=True, null=True, max_length=10)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     rep_username = models.ForeignKey(HealthCareRepresentative, models.DO_NOTHING, db_column='Rep Username', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    prescription_name = models.CharField(
+        db_column = 'Prescription Name', 
+        primary_key = False, 
+        blank = False, 
+        null = False,
+        max_length=100)
 
     class Meta:
         managed = False

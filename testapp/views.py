@@ -83,6 +83,11 @@ def distrib(request):
     dist_inventories = Inventory.objects.filter(distributer_id = dist_user.distributer_id)
     # medication ingrediants
     med_ingredients = MedicationIngredients.objects.filter(med_name__in = dist_medications)
+
+    # filter medication ingredients further using a get request:
+    #selected_med = request.GET.get('medication')
+    #print(f"Selected Medication: {selected_med}")
+
     if request.method == 'POST':
         med_form = MedForm(request.POST)
         ing_form = IngredientForm(request.POST)
@@ -108,6 +113,7 @@ def distrib(request):
             'add_ing_form':ing_form,
             'inventories':dist_inventories,
             'med_ingredients':med_ingredients
+            #'selected_med': selected_med
         })
 
 

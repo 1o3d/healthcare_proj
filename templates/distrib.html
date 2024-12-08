@@ -32,12 +32,12 @@
                 <div class="storetitle"><center><h2>Storefront</h2></center></div>
                 <div class="leftstore">
                     <div class="distribmeds">
-                        <center>Your Products</center>
+                        <h5><center>Your Products</center></h5>
                          <!--For every medication associated with the distributer, list it. -->
+                        <input type = "hidden" value = "" id = "med_flag"> <!-- hidden for js access-->
                         {% for medication in meds %}
-                            <li>
-                               <button class = "med_button" onclick = "toggleIngredients()">{{medication.med_name}}</button> 
-                            </li>
+                            <!--Each button should serve as a filter for ingredients associated with the selected medicine-->
+                            <button id = "med_filter" class = "med_button" type = "button"  onclick = "toggleIngredients('{{medication.med_name}}')">{{medication.med_name}}</button> 
                         {% endfor %}
                     </div>
                 </div>
@@ -71,9 +71,9 @@
                         <!--For every ingredient associated with the selected medication, create a row. -->
                         {% for Ingredient in med_ingredients %}
                         <li>
-                           <button class = "med_button" >{{Ingredient.iupac_name}}</button> 
+                            <button class = "med_button" >{{Ingredient.iupac_name}}</button> 
                         </li>
-                    {% endfor %}
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="rightstore">
@@ -108,20 +108,51 @@
 
             document.getElementById(tabName).style.display = "grid";
         }
+
+        //https://www.w3schools.com/css/css_display_visibility.asp
         //https://www.geeksforgeeks.org/how-to-find-out-if-an-element-is-hidden-with-javascript/
-        function toggleIngredients() {
+        function toggleIngredients(medication) {
+        
             ingredients_tab = document.getElementById("ingredients_list");
             store_tab = document.getElementById("store_table");
-            if(ingredients_tab.style.display === "none")
+            med_flag = document.getElementById("med_flag");
+            if(ingredients_tab.style.display === "none" && med_flag.value === "")
             {
                 ingredients_tab.style.display = "block";
                 store_tab.style.display = "none";
+                med_flag.value = medication;
+                // Grab every instance of med_button:
+                // https://www.w3schools.com/jsref/met_document_queryselectorall.asp
+                ingredients = document.querySelectorAll("med_button");
+
+                // use a for each loop:
+                // https://www.w3schools.com/jsref/jsref_foreach.asp
+                ingredients.forEach(ingredientsLoop);     
+            }
+            else if (ingredients_tab.style.display === "block" && med_flag.value !== medication)
+            {
+                med_flag.value = medication;
+                // Grab every instance of med_button:
+                // https://www.w3schools.com/jsref/met_document_queryselectorall.asp
+                ingredients = document.querySelectorAll("med_button");
+
+                // use a for each loop:
+                // https://www.w3schools.com/jsref/jsref_foreach.asp
+                ingredients.forEach(ingredientsLoop);   
             }
             else
             {
                 ingredients_tab.style.display = "none";
                 store_tab.style.display = "block";
+                med_flag.value = "";
             }
+            
+          
+        }
+
+        function ingredientsLoop(ingredient)
+        {
+            console.log(Ingredient.iupac_name);
         }
         document.getElementById("default").click();
     </script>

@@ -14,7 +14,7 @@ class SignupForm(ModelForm):
 class MedForm(ModelForm):
     class Meta:
         model = Medication
-        fields = ['med_name']
+        fields = ['med_name','needs_prescription']
 
 class IngredientForm(ModelForm):
     class Meta:
