@@ -77,13 +77,63 @@
                 
             </div>
             <div id="Insurance" class="tabcontent">
-                <div class="addallrdiv">
-                    <h3>Insurance Tab</h3>
-                    Add New Insurance Plan<br>
-                    Coverage Type:
-                    <input type="text" id="insurancetypeinput" class="instypein">
-                    <button class="addcov">Submit</button> 
+                <div class="inscontent">
+                    <div class="addallrdiv">
+                        <h3>Insurance Tab</h3>
+                        <form method="post" action="/user_create_insurance/" style="margin: 10px; border: 2px solid
+                        blue; padding:5px; background-color:lightgray;">
+                            {% csrf_token %}
+                            
+                            Add New Insurance Plan<br>
+                            Insurance Type:
+                            <input type="text" name="insurancetypeinput" class="instypein">
+                            <button name="addins">Submit</button> 
+                        </form>
+                        <form method="post" action="/user_create_coverage/" style="margin: 10px; border: 2px solid
+                        blue; padding:5px; background-color:lightgray;">
+                            {% csrf_token %}
+                            
+                            Add Coverage to Insurance:<br>
+                            Insurance Plan:
+                            <select class="ingrselect" name="insselect">
+                                <option value="" selected disabled hidden>Select a plan</option>
+                                {% for plan in plans %}
+                                    <option value="{{ plan.health_insurance_field }}">{{ plan.coverage_type }} - ID#{{ plan.health_insurance_field }}</option>
+                                {% endfor %}
+                            </select><br>
+                            Prescription Coverage:
+                            <select class="ingrselect" name="covpres">
+                                <option value="" selected disabled hidden>Select a prescription</option>
+                                {% for prescription in prescriptions %}
+                                    <option value="{{ prescription.pk }}">{{ prescription.prescription_name }}</option>
+                                {% endfor %}
+                            </select><br>
+                            Coverage Amount (%):
+                            <input type="text" name="covperc" class="instypein"><br>
+                            <button name="addins">Submit</button> 
+                        </form>
+
+                    </div>
+                    {% for plan in plans %}
+                        <div style="margin:20px; border: 2px solid red; padding:5px; background-color:lightgray;">
+                            Insurance Plan ID#{{ plan.health_insurance_field }} <br>
+                            Insurance Type: {{ plan.coverage_type }} <br>
+                                {% for cov in covs %}
+                                {% if cov.health_insurance_field == plan %}
+                                <div style="margin:20px; border: 2px solid red; padding:5px; background-color:lightgray;">
+                                    Prescription Coverage: {{cov.rx_number.prescription_name}}<br>
+                                    Coverage Amount: {{cov.coverage_amount}}%
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            <form method="post" action="/user_delete_insurance/">
+                                {% csrf_token %}
+                                <button name="plandelbutton" value="{{ plan.health_insurance_field }}">Delete Plan</button>
+                            </form>
+                        </div>
+                    {% endfor %}
                 </div>
+                
             </div>
             <div id="Prescriptions" class="tabcontent">
                 <div class="prescontent">
@@ -93,6 +143,9 @@
                         {% csrf_token %}
                         
                         Add New Prescription:<br>
+                        Rx Number:
+                        <input type="text" name="presrxinput" class="pnamein">
+                        <br>
                         Medicine Name:
                         <input type="text" name="presnameinput" class="pnamein">
                         <br>
@@ -105,7 +158,7 @@
                     </form>
                     {% for prescription in prescriptions %}
                         <div style="margin:20px; border: 2px solid red; padding:5px; background-color:lightgray;">
-                            Prescription {{ forloop.counter }} <br>
+                            Prescription Rx: {{ prescription.rx_number }} <br>
                             Medicine Name: {{ prescription.prescription_name }} <br>
                             Prescription Amount: {{ prescription.dosage }} <br>
                             Refill Date: {{ prescription.refill_date }}<br>

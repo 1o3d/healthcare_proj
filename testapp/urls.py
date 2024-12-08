@@ -16,5 +16,10 @@ urlpatterns = [
     path('user_create_allergy/', views.user_create_allergy, name='user_create_allergy'),
     path('user_delete_allergy/', views.user_delete_allergy, name='user_delete_allergy'),
     path('user_create_pres/', views.user_create_pres, name='user_create_pres'),
-    path('user_delete_pres/', views.user_delete_pres, name='user_delete_pres')
+    path('user_delete_pres/', views.user_delete_pres, name='user_delete_pres'),
+    path('user_create_insurance/', views.user_create_insurance, name='user_create_insurance'),
+    path('user_delete_insurance/', views.user_delete_insurance, name='user_delete_insurance'),
+    path('user_create_coverage/', views.user_create_coverage, name='user_create_coverage'),
+    path('user_delete_coverage/', views.user_delete_coverage, name='user_delete_coverage')
+
 ]
