@@ -1,9 +1,12 @@
 {% load static %}
+{% load django_bootstrap5 %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="{% static 'user.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'distrib.css' %}">
     <link rel="shortcut icon" type="image/png" href="{% static 'pills-bottle.ico' %}"/>
     <title>Online Pharmacy</title>
 </head>
@@ -14,19 +17,28 @@
 
     <div class="container"> 
         <div class="sidebar">
-            <button class="tab" id="default" onclick="getTab('Store', this)">Store</button>
-            <button class="tab" onclick="getTab('Settings', this)">Settings</button>
+            <button class="tab" class="storetab" id="default" onclick="getTab('Store', this)">Manage/View Medicines</button>
+            <div class="tabspacer"></div>
+            <button class="tab" class="add_meds_tab" onclick="getTab('Add_Meds', this)">Add New Medicines</button>
+            <form method = "post" action="/logout/">
+                {% csrf_token%}
+                <!--Log out of the account -->
+                <button type="submit" class="tab" class="logouttab">Logout</button>
+            </form>
+            
         </div>
         <div class="mainpane">
-            <h1>THIS IS THE DISTRIBUTER PAGE!!</h1>
-            {% if  logged_in %}
-        <p>User: {{logged_in}}</p>
-            {% endif %}
             <div id="Store" class="tabcontent">
                 <div class="storetitle"><center><h2>Storefront</h2></center></div>
                 <div class="leftstore">
-                    <div class="storesettings">
-                        <center>Store Search</center>
+                    <div class="distribmeds">
+                        <center>Your Products</center>
+                         <!--For every medication associated with the distributer, list it. -->
+                        {% for medication in meds %}
+                            <li>
+                               <label>{{medication.med_name}}</label> 
+                            </li>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="storefront">
@@ -42,8 +54,13 @@
                 <div class="rightstore">
                 </div>
             </div>
-            <div id="Settings" class="tabcontent">
-                <h3>Settings</h3>
+            <div id="Add_Meds" class="tabcontent">
+                <h3>Add new medication</h3>
+                <form method="post">
+                    {% csrf_token%}
+                    {% bootstrap_form add_med_form %}
+                    {% bootstrap_button button_type="submit" content="Add medication" %}
+                </form>
             </div>
         </div>
     </div>
@@ -64,10 +81,9 @@
         }
         document.getElementById("default").click();
     </script>
-<form method = "post" action = "/logout/">
-            {% csrf_token%}
-            <!--Log out of the account -->
-            <button type="submit">Logout</button>
-        </form>
+
 </body>
 </html>
+
+
+
