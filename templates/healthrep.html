@@ -1,18 +1,197 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load django_bootstrap5 %}
     <meta charset="UTF-8">
-    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'user.css' %}">
+    <link rel="shortcut icon" type="image/png" href="{% static 'pills-bottle.ico' %}"/>
+    <title>Online Pharmacy</title>
 </head>
 <body>
-    <h1>this is the healthcare rep page</h1>
-    {% if  logged_in %}
+    <!-- learned how to do tabs from w3schools.com -->
+    <!-- https://www.w3schools.com/howto/howto_js_full_page_tabs.asp-->
+
+
+    <div class="container">
+        <div class="sidebar">
+            <button class="tab" id="default" onclick="getTab('Store', this)">Home</button>
+            <button class="tab" onclick="getTab('Customer', this)">Add Customers</button>
+            <button class="tab" onclick="getTab('Settings', this)">Settings</button>
+
+        </div>
+        <div class="mainpane">
+            {% if  logged_in %}
         <p>User: {{logged_in}}</p>
+            {% endif %}
+
+            <div id="Store" class="tabcontent">
+                <div class="storetitle"><center><h2>Customer Details</h2></center></div>
+                <div class="leftstore">
+
+                    <div class="storesettings">
+                        <h3>Customer List</h3>
+                        <ul>
+                            {% for customer in customers %}
+                                <li class = "cust_clicky" onclick="fetchCustomerDetails('{{ customer.username }}')" style="cursor: pointer;">
+                                    {{ customer }}
+                                </li>
+                                <br>
+                            {% empty %}
+{#                                {{ customers }}#}
+                                <p>No customers found.</p>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="storefront" id="customerDetails">
+                    <p>Select a customer to view their details here.</p>
+                </div>
+                <div class="rightstore">
+                </div>
+            </div>
+            <div id="Settings" class="tabcontent">
+                <h3>Settings</h3>
+            </div>
+        <div>
+            <div id="Customer" class="tabcontent">
+{#                <h3>Add new customer</h3>#}
+            <button class="tab" onclick="getTab('linkCustomer', this)">Link existing customer</button>
+{#            <button class="tab" onclick="getTab('editCustomer', this)">Edit customer</button>#}
+            <button class="tab" onclick="getTab('unlinkCustomer', this)">Unlink customer</button>
+            </div>
+
+            <div id ="addCustomer" class = "tabcontent">
+            <h3>Add a new customer</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    {{form}}
+                    {% bootstrap_button button_type="submit" content="Register Account" %}
+                </form>
+            </div>
+
+            <div id ="linkCustomer" class = "tabcontent">
+                <h3>link an existing customer</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form }}
+                    {% bootstrap_button button_type="submit" content="Link existing customer" %}
+                </form>
+            </div>
+
+            <div id = "editCustomer" class = "tabcontent">
+            <h3>THIS IS WHERE YOU CAN EDIT ALL YOUR CUSTOMERS</h3>
+            </div>
+
+            <div id="unlinkCustomer" class="tabcontent">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Healthcare ID</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.first_name }}</td>
+                <td>{{ customer.last_name }}</td>
+                <td>{{ customer.alberta_healthcare_id }}</td>
+                <td>
+                    <!-- Unlink Button -->
+                    <form method="POST" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="customer_user" value="{{ customer.username }}">
+                        <button type="submit" name="unlink_customer" class="btn btn-warning">Unlink</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{#            <div id = "unlinkCustomer" class = "tabcontent">#}
+{#                {% for customer in customers %}#}
+{#                <tr>#}
+{#                    <td>{{ customer.first_name }}</td>#}
+{#                    <td>{{ customer.last_name }}</td>#}
+{#                    <td>{{ customer.alberta_healthcare_id }}</td>#}
+{#                    <td>#}
+{#                        <!-- Unlink Button -->#}
+{#                        <form method="POST" style="display:inline;">#}
+{#                            {% csrf_token %}#}
+{#                            <input type="hidden" name="customer_user" value="{{ customer.username }}">#}
+{#                            <button type="submit" name="unlink_customer" class="btn btn-warning">Unlink</button>#}
+{#                        </form>#}
+{#                    </td>#}
+{#                    <br>#}
+{#                </tr>#}
+{#            {% endfor %}#}
+{#            <h3>#}
+{#            </h3>#}
+{#            </div>#}
+        </div>
+
+
+
+        </div>
+
+    </div>
+
+    <script>
+        function getTab(tabName, e) {
+            var i, tabcon, tablinks;
+            tabcon = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcon.length; i++) {
+                tabcon[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tabcon.length; i++) {
+                tabcon[i].style.display = "none";
+            }
+
+            document.getElementById(tabName).style.display = "grid";
+        }
+        document.getElementById("default").click();
+
+        function fetchCustomerDetails(customer_username) {
+    fetch(`/customer/${customer_username}/`)
+        .then(response => response.json())
+        .then(data => {
+            let allergiesContent = "No allergies!";
+            if (data.allergies && data.allergies.length > 0) {
+                allergiesContent = data.allergies
+                    .map(iupac_name => `<li>${data.allergies.iupac_name}</li>`)
+                    .join(""); // Convert the list to HTML
+                allergiesContent = `<ul>${allergiesContent}</ul>`;
+            }
+            const detailsDiv = document.getElementById("customerDetails");
+            detailsDiv.innerHTML = `
+                <h3>Customer Details</h3>
+                <p><strong>Healthcare ID:</strong> ${data.healthcare_id}</p>
+                <p><strong>First Name:</strong> ${data.first_name}</p>
+                <p><strong>Last Name:</strong> ${data.last_name}</p>
+
+                <p><strong>Phone number:</strong> ${data.phone}</p>
+                <p><strong>Email:</strong> ${data.email}</p>
+{#                <p><strong>Allergies:</strong> ${aller}</p>#}
+                <p><strong>Insurance plan:</strong> ${data.custInsurance}</p>
+            `;
+        })
+        .catch(error => {
+            console.error("Error fetching customer details:", error);
+            const detailsDiv = document.getElementById("customerDetails");
+            detailsDiv.innerHTML = `<p>Error loading customer details. Please try again.</p>`;
+        });
+}
+    </script>
         <form method = "post" action = "/logout/">
             {% csrf_token%}
             <!--Log out of the account -->
-            <button type="submit">Logout</button> 
+            <button type="submit">Logout</button>
         </form>
-    {% endif %}
+
 </body>
 </html>

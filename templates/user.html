@@ -15,11 +15,20 @@
     <div class="container"> 
         <div class="sidebar">
             <button class="tab" id="default" onclick="getTab('Store', this)">Store</button>
+<<<<<<< HEAD
             <button class="tab" onclick="getTab('Allergies', this)">Allergies</button>
             <button class="tab" onclick="getTab('Insurance', this)">Insurance</button>
             <button class="tab" onclick="getTab('Prescriptions', this)">Prescriptions</button>
         </div>
         <div class="mainpane">
+=======
+            <button class="tab" onclick="getTab('Settings', this)">Settings</button>
+        </div>
+        <div class="mainpane">
+            {% if  logged_in %}
+        <p>User: {{logged_in}}</p>
+            {% endif %}
+>>>>>>> main
             <div id="Store" class="tabcontent">
                 <div class="storetitle"><center><h2>Storefront</h2></center></div>
                 <div class="leftstore">
@@ -99,3 +108,7 @@
 </html>
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
