@@ -94,7 +94,7 @@ def distrib(request):
     # grab every inventory that stores medication that this distributor has supplied.
     dist_inventories = Inventory.objects.filter(distributer_id = dist_user.distributer_id)
     # medication ingrediants
-    med_ingredients = MedicationIngredients.objects.filter(med_name__in = dist_medications)
+    med_ingredients = MedicationIngredients.objects.filter(med_name__in = dist_medications).values('med_name','iupac_name')
 
     # filter medication ingredients further using a get request:
     #selected_med = request.GET.get('medication')
@@ -103,6 +103,7 @@ def distrib(request):
     if request.method == 'POST':
         med_form = MedForm(request.POST)
         ing_form = IngredientForm(request.POST)
+        med_ing_form = MedicationIngredientForm(request.POST)
         if med_form.is_valid():
             # https://docs.djangoproject.com/en/5.1/topics/forms/modelforms/#:~:text=If%20you%20call%20save(),on%20the%20resulting%20model%20instance.
             # The form is created but not saved, we still need to input the dist id attribute
@@ -110,12 +111,17 @@ def distrib(request):
             # Although it's a foreign key of type CHAR. This is actually asking for a distributer to be assigned to.
             medication.distributer_id = dist_user
             medication.save() #Add the medication
-
-        if ing_form.is_valid():
+        elif ing_form.is_valid():
             ing_form.save()
+
+        elif med_ing_form.is_valid():
+            medication_ingredient = med_ing_form.save(commit=False)
+            medication_ingredient.distributer_id = dist_user
+            medication_ingredient.save()
     else:
         med_form = MedForm()
         ing_form = IngredientForm()
+        med_ing_form = MedicationIngredientForm()
     # send over the re;evant medications for render
     return render(request,'distrib.html',
         {
@@ -123,9 +129,9 @@ def distrib(request):
             'meds':dist_medications,
             'add_med_form':med_form,
             'add_ing_form':ing_form,
+            'add_med_ing_form':med_ing_form,
             'inventories':dist_inventories,
-            'med_ingredients':med_ingredients
-            #'selected_med': selected_med
+            'med_ingredients':list(med_ingredients)
         })
 
 

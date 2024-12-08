@@ -20,6 +20,7 @@
             <button class="tab" class="storetab" id="default" onclick="getTab('Store', this)">Manage/View Medicines</button>
             <div class="tabspacer"></div>
             <button class="tab" class="add_meds_tab" onclick="getTab('Add_Meds', this)">Add New Medicines</button>
+            <button class="tab" class="add_ingredients_tab" onclick="getTab('Add_Ingredients', this)">Add New Ingredients</button>
             <form method = "post" action="/logout/">
                 {% csrf_token%}
                 <!--Log out of the account -->
@@ -61,18 +62,21 @@
                         {% endfor %}
                     </table>
                     <div id ="ingredients_list">
-                        <h5>Add new Ingredient</h5>
+                        <h5 id = "add_new_ingredients_header"></h5>
                         <form method="post">
                             {% csrf_token%}
-                            {% bootstrap_form add_ing_form %}
+                            {% bootstrap_form add_med_ing_form %}
+
+                             <!-- This field is required for the database -->
+                            <input id="form_med_name" name="med_name" type="hidden" value = "">
+
                             {% bootstrap_button button_type="submit" content="Add Ingredient" %}
                         </form>
-                        <h5>Current Ingredients</h5>
+                        <br>
+                        <h5 id = "current_ingredients_header"></h5>
                         <!--For every ingredient associated with the selected medication, create a row. -->
                         {% for Ingredient in med_ingredients %}
-                        <li>
-                            <button class = "med_button" >{{Ingredient.iupac_name}}</button> 
-                        </li>
+                            <p><button class = "ing_button" value = "{{Ingredient.iupac_name}}" style = "display: none">{{Ingredient.iupac_name}}</button></p> 
                         {% endfor %}
                     </div>
                 </div>
@@ -88,6 +92,14 @@
                     {% csrf_token%}
                     {% bootstrap_form add_med_form %}
                     {% bootstrap_button button_type="submit" content="Add medication" %}
+                </form>
+            </div>
+            <div id="Add_Ingredients" class="tabcontent">
+                <h3>Add new ingredient</h3>
+                <form method="post">
+                    {% csrf_token%}
+                    {% bootstrap_form add_ing_form %}
+                    {% bootstrap_button button_type="submit" content="Add ingredient to Database" %}
                 </form>
             </div>
 
@@ -109,21 +121,44 @@
             document.getElementById(tabName).style.display = "grid";
         }
 
+        ingredients_tab = document.getElementById("ingredients_list");
+        store_tab = document.getElementById("store_table");
+        med_flag = document.getElementById("med_flag");
+        med_ingredients = {{med_ingredients|safe}};
+        //console.log(med_ingredients);
+        // Grab every instance of ing_button:
+        // https://www.w3schools.com/jsref/met_document_queryselectorall.asp
+        ingredients = document.querySelectorAll(".ing_button");
+        filtered_meds = null;
         //https://www.w3schools.com/css/css_display_visibility.asp
         //https://www.geeksforgeeks.org/how-to-find-out-if-an-element-is-hidden-with-javascript/
         function toggleIngredients(medication) {
-        
-            ingredients_tab = document.getElementById("ingredients_list");
-            store_tab = document.getElementById("store_table");
-            med_flag = document.getElementById("med_flag");
+
             if(ingredients_tab.style.display === "none" && med_flag.value === "")
             {
                 ingredients_tab.style.display = "block";
                 store_tab.style.display = "none";
                 med_flag.value = medication;
-                // Grab every instance of med_button:
-                // https://www.w3schools.com/jsref/met_document_queryselectorall.asp
-                ingredients = document.querySelectorAll("med_button");
+
+                // Update the form's hidden fields:
+                document.getElementById("form_med_name").value = medication;
+
+                //console.log(medication);
+                  
+                //https://www.w3schools.com/jsref/jsref_filter.asp
+                //https://www.w3schools.com/jsref/jsref_map.asp
+                filtered_meds = med_ingredients.filter(selectMed).map(grabIupacNames);
+
+                // Change the add new ingredients header
+                dynamic_header = document.getElementById("add_new_ingredients_header");
+                dynamic_header.textContent = "Current Ingredients in " + medication + ":";
+
+                // Change the current ingredients header
+                dynamic_header_2 = document.getElementById("current_ingredients_header");
+                dynamic_header_2.textContent = "Current Ingredients in " + medication + ":";
+
+
+                //console.log(filtered_meds);
 
                 // use a for each loop:
                 // https://www.w3schools.com/jsref/jsref_foreach.asp
@@ -132,10 +167,22 @@
             else if (ingredients_tab.style.display === "block" && med_flag.value !== medication)
             {
                 med_flag.value = medication;
-                // Grab every instance of med_button:
-                // https://www.w3schools.com/jsref/met_document_queryselectorall.asp
-                ingredients = document.querySelectorAll("med_button");
+                console.log(medication);
 
+                // Update the form's hidden fields:
+                document.getElementById("form_med_name").value = medication;
+
+                //https://www.w3schools.com/jsref/jsref_filter.asp
+                filtered_meds = med_ingredients.filter(selectMed).map(grabIupacNames);
+
+                // Change the add new ingredients header
+                dynamic_header = document.getElementById("add_new_ingredients_header");
+                dynamic_header.textContent = "Current Ingredients in " + medication + ":";
+
+                // Change the current ingredients header
+                dynamic_header_2 = document.getElementById("current_ingredients_header");
+                dynamic_header_2.textContent = "Current Ingredients in " + medication + ":";
+          
                 // use a for each loop:
                 // https://www.w3schools.com/jsref/jsref_foreach.asp
                 ingredients.forEach(ingredientsLoop);   
@@ -144,15 +191,40 @@
             {
                 ingredients_tab.style.display = "none";
                 store_tab.style.display = "block";
+                store_tab.style.width = "100%";
+                store_tab.style.tableLayout = "fixed";
                 med_flag.value = "";
             }
             
           
         }
 
+        // filter method for medications
+        function selectMed(medication)
+        {
+            if(medication.med_name === med_flag.value)
+            {
+                return medication;
+            }
+        }
+
+        // mapping method for medications
+        function grabIupacNames(medication)
+        {
+            return medication.iupac_name;
+        }
+
         function ingredientsLoop(ingredient)
         {
-            console.log(Ingredient.iupac_name);
+            med_flag = document.getElementById("med_flag");
+            if(filtered_meds.includes(ingredient.value))
+            {
+                ingredient.style.display = "block";
+            }
+            else
+            {
+                ingredient.style.display = "none";
+            }
         }
         document.getElementById("default").click();
     </script>
