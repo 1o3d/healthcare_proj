@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm, PasswordInput
-from .models import  Customer, Medication, CustomerPhone, CustomerEmail, InsurancePlan, MedicationIngredients, Ingredient
+from .models import  Customer, Medication, CustomerPhone, CustomerEmail, InsurancePlan, MedicationIngredients, Ingredient, Distributer, HealthCareRepresentative
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100, required=True)
     password = forms.CharField(widget=PasswordInput(),max_length=100, required=True)
@@ -59,3 +59,21 @@ class IngredientForm(ModelForm):
     class Meta:
         model = Ingredient
         fields = "__all__"
+
+class DistributerSignupForm(forms.ModelForm):
+    class Meta:
+        model = Distributer
+        fields = "__all__"
+
+    password = forms.CharField(
+        widget=PasswordInput(attrs={'class': 'form-control'}),
+        label="Password",)
+
+class RepresentitiveSignupForm(forms.ModelForm):
+    class Meta:
+        model = HealthCareRepresentative
+        fields = "__all__"
+
+    password = forms.CharField(
+        widget=PasswordInput(attrs={'class': 'form-control'}),
+        label="Password",)
