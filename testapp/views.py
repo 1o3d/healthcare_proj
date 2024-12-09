@@ -27,7 +27,7 @@ def login(request):
             try:
                 invalidCred = False
                  # https://docs.djangoproject.com/en/5.1/topics/db/queries/
-                cust_user = Customer.objects.get(username = form_username)   # Syntax: <variable name> = <model name>.objects.get(<dbcolumn=value>)
+                cust_user = Customer.objects.get(username = form_username, password=form_password)   # Syntax: <variable name> = <model name>.objects.get(<dbcolumn=value>)
                 print(cust_user.first_name + ' ' + cust_user.last_name) # used for testing
 
                 # https://www.tutorialspoint.com/django/django_sessions.htm
@@ -42,7 +42,7 @@ def login(request):
                 # check for representative
                 try:
                     # invalidCred = False
-                    rep_user = HealthCareRepresentative.objects.get(username = form_username)
+                    rep_user = HealthCareRepresentative.objects.get(username = form_username, password=form_password)
                     print(rep_user.first_name + ' ' + rep_user.last_name)
                     request.session['username'] = form_username
                     request.session['usertype'] = 2
@@ -53,7 +53,7 @@ def login(request):
 
                     # check for distributer
                     try:
-                        dist_user = Distributer.objects.get(username = form_username)
+                        dist_user = Distributer.objects.get(username = form_username, password=form_password)
                         request.session['username'] = form_username
                         request.session['usertype'] = 3
                         return redirect('distrib')
@@ -193,7 +193,7 @@ def distrib(request):
     if request.method == 'POST':
         med_form = MedForm(request.POST)
         ing_form = IngredientForm(request.POST)
-        med_ing_form = MedicationIngredientForm(request.POST)
+        med_ing_form = IngredientForm(request.POST)
         if med_form.is_valid():
             # https://docs.djangoproject.com/en/5.1/topics/forms/modelforms/#:~:text=If%20you%20call%20save(),on%20the%20resulting%20model%20instance.
             # The form is created but not saved, we still need to input the dist id attribute
@@ -211,7 +211,7 @@ def distrib(request):
     else:
         med_form = MedForm()
         ing_form = IngredientForm()
-        med_ing_form = MedicationIngredientForm()
+        med_ing_form = IngredientForm()
     # send over the re;evant medications for render
     return render(request,'distrib.html',
         {
@@ -298,7 +298,10 @@ def customer_details(request, customer_username):
         ]
 
     try:
-        custInsurance = InsurancePlan.objects.get(cust_healthcare_id=custHealthID).health_insurance_field
+        custInsList = []
+        custInsurance = InsurancePlan.objects.filter(cust_healthcare_id=custHealthID)
+        for i in custInsurance:
+            custInsList.append(i.coverage_type)
     except InsurancePlan.DoesNotExist:
         custInsurance = 'No insurance plan'
 
@@ -309,10 +312,85 @@ def customer_details(request, customer_username):
         "email": custEmail,
         "allergies": custAllergies,
         "healthcare_id": customer.alberta_healthcare_id,
-        "insurance_plan": custInsurance,
+        "insurance_plan": custInsList,
 
     }
     return JsonResponse(data)
 
 
+def edit_customer(request, username):
+    customer = get_object_or_404(Customer, username=username)
+    try:
+        customer_phone = CustomerPhone.objects.get(alberta_healthcare_id=customer.alberta_healthcare_id)
+    except CustomerPhone.DoesNotExist:
+        customer_phone = None
+
+    try:
+        customer_email = CustomerEmail.objects.get(alberta_healthcare_id=customer.alberta_healthcare_id)
+    except CustomerEmail.DoesNotExist:
+        customer_email = None
+
+    try:
+        customer_insurance = InsurancePlan.objects.get(cust_healthcare_id=customer.alberta_healthcare_id)
+    except InsurancePlan.DoesNotExist:
+        customer_insurance = None
+
+    if request.method == 'POST':
+        # Handle form submission
+        customer_form = CustomerEditForm(request.POST, instance=customer)
+        phone_formset = CustPhoneForm(request.POST, instance=customer_phone)
+        email_formset = CustomerEmailForm(request.POST, instance=customer_email)
+        ins_formset = CustomerInsuranceForm(request.POST, instance=customer_insurance)
+
+
+        if customer_form.is_valid() and phone_formset.is_valid() and email_formset.is_valid():
+            customer_instance = customer_form.save(commit=False)
+            phone_instance = phone_formset.save(commit=False)
+            email_instance = email_formset.save(commit=False)
+            ins_instance = ins_formset.save(commit=False)
+
+            phone_instance.alberta_healthcare_id = customer
+            email_instance.alberta_healthcare_id = customer
+            ins_instance.cust_healthcare_id = customer
+            # for field in customer_form.cleaned_data:
+            #     if customer_form.cleaned_data[field] not in [None, ""]:
+            #         setattr(customer_instance, field, customer_form.cleaned_data[field])
+            #
+            # for field in phone_formset.cleaned_data:
+            #     if phone_formset.cleaned_data[field] not in [None, ""]:
+            #         setattr(phone_instance, field, phone_formset.cleaned_data[field])
+            #
+            # for field in email_instance.cleaned_data:
+            #     if email_formset.cleaned_data[field] not in [None, ""]:
+            #         setattr(email_instance, field, email_formset.cleaned_data[field])
+            # customer_instance.save()
+            #
+            # phone_formset.save()
+            # email_formset.save()
+            #
+            # return redirect('customer_details', username=customer.username)
+            print("Customer instance data:", customer_instance.__dict__)
+            print("Phone instance data:", phone_instance.__dict__)
+            print("Email instance data:", email_instance.__dict__)
+            print("Insurance instance data:", ins_instance.__dict__)
+            customer_form.save()
+            phone_formset.save()
+            email_formset.save()
+            ins_formset.save()
+
+            return redirect('/healthrep')
+    else:
+        # Populate forms with existing data
+        customer_form = CustomerEditForm(instance=customer)
+        phone_formset = CustPhoneForm(instance=customer_phone)
+        email_formset = CustomerEmailForm(instance=customer_email)
+        ins_formset = CustomerInsuranceForm(instance=customer_insurance)
+
+    return render(request, 'edit_customer.html', {
+        'customer_form': customer_form,
+        'phone_formset': phone_formset,
+        'email_formset': email_formset,
+        'ins_formset': ins_formset,
+        'customer': customer,
+    })
     
