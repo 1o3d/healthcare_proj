@@ -37,8 +37,15 @@
                          <!--For every medication associated with the distributer, list it. -->
                         <input type = "hidden" value = "" id = "med_flag"> <!-- hidden for js access-->
                         {% for medication in meds %}
+                        <div class = "medcontainer" style = "display: flex">
                             <!--Each button should serve as a filter for ingredients associated with the selected medicine-->
                             <button id = "med_filter" class = "med_button" type = "button"  onclick = "toggleIngredients('{{medication.med_name}}')">{{medication.med_name}}</button> 
+                            <form method = "post" action="/delete_med/">
+                                {% csrf_token%}
+                                <!--Log out of the account -->
+                                <button name = "del_med_button" value = "{{medication.med_name}}" type="submit" class="delete">X</button>
+                            </form>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>

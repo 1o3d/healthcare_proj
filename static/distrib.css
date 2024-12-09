@@ -21,6 +21,19 @@ body, html {
     grid-row:2;
 }
 
+.delete {
+    margin-left: auto;  /* Pushes the button to the right */
+    color: lightgray;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .delete:hover {
+    color: red;
+  }
+
 .med_button,.ing_button{
     background-color: transparent;
     border: none;

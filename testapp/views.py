@@ -134,6 +134,12 @@ def distrib(request):
             'med_ingredients':list(med_ingredients)
         })
 
+def delete_med(request):
+    if request.method == "POST":
+        todelete = request.POST.get('del_med_button')
+        print("deleting " + todelete)
+        Medication.objects.filter(pk=todelete).delete()
+    return redirect('distrib')
 
 def healthrep(request):
     rep = request.session.get('username', default=None)

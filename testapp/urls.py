@@ -12,5 +12,6 @@ urlpatterns = [
     path('user/', views.user, name = 'user'),
     path('healthrep/', views.healthrep, name = 'healthrep'),
     path('distrib/', views.distrib, name = 'distrib'),
+    path('delete_med/', views.delete_med, name = 'delete_med'),
     path('customer/<str:customer_username>/', views.customer_details, name='customer_details')
 ]
