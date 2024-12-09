@@ -184,7 +184,7 @@ def distrib(request):
     if request.method == 'POST':
         med_form = MedForm(request.POST)
         ing_form = IngredientForm(request.POST)
-        med_ing_form = MedicationIngredientForm(request.POST)
+        med_ing_form = IngredientForm(request.POST)
         if med_form.is_valid():
             # https://docs.djangoproject.com/en/5.1/topics/forms/modelforms/#:~:text=If%20you%20call%20save(),on%20the%20resulting%20model%20instance.
             # The form is created but not saved, we still need to input the dist id attribute
@@ -202,7 +202,7 @@ def distrib(request):
     else:
         med_form = MedForm()
         ing_form = IngredientForm()
-        med_ing_form = MedicationIngredientForm()
+        med_ing_form = IngredientForm()
     # send over the re;evant medications for render
     return render(request,'distrib.html',
         {
