@@ -33,11 +33,19 @@
                     <div class="storefront" name="storefocus" id="{{ med.med_name }}" style="display:none; ">
                         <h1>{{ med.med_name }}</h1>
                         <hr>
+                        {% if med in allrgmeds %}
+                        <label style="color:red"><strong>Allergy Status: You are allergic to this medication!</strong></label><br>
+                        {% else %}
+                        Allergy Status: No allergies found for this medication. <br>
+                        {% endif %}
+                        Price: 
+                        <hr>
+                        <button onclick="goBackToMainStore()">Back to Store</button>
                         
                     </div>
                 {% endfor %}
                 
-                <div class="storefront" style="display:flex; flex-wrap:wrap">
+                <div class="storefront" id="storefrontmain" style="display:flex; flex-wrap:wrap">
                     {% for med in meds %}
                     <button class="storemedbutton" style="margin: 3px; width:32%; height:200px; border: 2px solid blue"
                     onClick="getMedFront('{{ med.med_name }}')">
@@ -202,6 +210,16 @@
 
             document.getElementById(medname).style.display = "block";
         }
+        function goBackToMainStore() {
+            var i;
+            sfronts = document.getElementsByClassName("storefront");
+            for (i = 0; i < sfronts.length; i++) {
+                sfronts[i].style.display = "none";
+            }
+            
+            document.getElementById('storefrontmain').style.display = "flex";
+        }
+        
         document.getElementById("default").click();
     </script>
 

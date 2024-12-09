@@ -97,6 +97,18 @@ def user(request):
     presc_meds = Medication.objects.filter(
         med_name__in=Subquery(matching_prescs)
     )
+    free_meds = Medication.objects.filter(needs_prescription=0)
+    presc_meds = presc_meds.union(free_meds)
+    allergic_meds = Medication.objects.filter(
+        med_name__in=Subquery(
+            MedicationIngredients.objects.filter(
+                iupac_name__in=Subquery(
+                    allergies.values('ingredient_id')
+                )
+            ).values('med_name')
+        )
+    )
+    print(allergic_meds)
 
     returnstruct = {
         'logged_in': request.session.get('username', default = None),
@@ -105,7 +117,8 @@ def user(request):
         'prescriptions': prescriptions,
         'plans': insurance,
         'covs': coverages,
-        'meds': presc_meds
+        'meds': presc_meds,
+        'allrgmeds': allergic_meds
     }
     return render(request, 'user.html',returnstruct)
 
