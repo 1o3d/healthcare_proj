@@ -108,7 +108,7 @@ def user(request):
             ).values('med_name')
         )
     )
-    print(allergic_meds)
+    inventories = Inventory.objects.all()
 
     returnstruct = {
         'logged_in': request.session.get('username', default = None),
@@ -118,7 +118,8 @@ def user(request):
         'plans': insurance,
         'covs': coverages,
         'meds': presc_meds,
-        'allrgmeds': allergic_meds
+        'allrgmeds': allergic_meds,
+        'inventories': inventories
     }
     return render(request, 'user.html',returnstruct)
 

@@ -38,7 +38,8 @@
                         {% else %}
                         Allergy Status: No allergies found for this medication. <br>
                         {% endif %}
-                        Price: 
+                        {% for inventory in inventories %}
+                        {% endfor %}
                         <hr>
                         <button onclick="goBackToMainStore()">Back to Store</button>
                         
