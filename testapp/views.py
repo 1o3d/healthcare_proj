@@ -289,7 +289,7 @@ def customer_details(request, customer_username):
         ]
 
     try:
-        custInsurance = InsurancePlan.objects.get(cust_healthcare_id=custHealthID).health_insurance_field
+        custInsurance = InsurancePlan.objects.get(cust_healthcare_id=custHealthID).coverage_type
     except InsurancePlan.DoesNotExist:
         custInsurance = 'No insurance plan'
 
@@ -306,4 +306,79 @@ def customer_details(request, customer_username):
     return JsonResponse(data)
 
 
+def edit_customer(request, username):
+    customer = get_object_or_404(Customer, username=username)
+    try:
+        customer_phone = CustomerPhone.objects.get(alberta_healthcare_id=customer.alberta_healthcare_id)
+    except CustomerPhone.DoesNotExist:
+        customer_phone = None
+
+    try:
+        customer_email = CustomerEmail.objects.get(alberta_healthcare_id=customer.alberta_healthcare_id)
+    except CustomerEmail.DoesNotExist:
+        customer_email = None
+
+    try:
+        customer_insurance = InsurancePlan.objects.get(cust_healthcare_id=customer.alberta_healthcare_id)
+    except InsurancePlan.DoesNotExist:
+        customer_insurance = None
+
+    if request.method == 'POST':
+        # Handle form submission
+        customer_form = CustomerEditForm(request.POST, instance=customer)
+        phone_formset = CustPhoneForm(request.POST, instance=customer_phone)
+        email_formset = CustomerEmailForm(request.POST, instance=customer_email)
+        ins_formset = CustomerInsuranceForm(request.POST, instance=customer_insurance)
+
+
+        if customer_form.is_valid() and phone_formset.is_valid() and email_formset.is_valid():
+            customer_instance = customer_form.save(commit=False)
+            phone_instance = phone_formset.save(commit=False)
+            email_instance = email_formset.save(commit=False)
+            ins_instance = ins_formset.save(commit=False)
+
+            phone_instance.alberta_healthcare_id = customer
+            email_instance.alberta_healthcare_id = customer
+            ins_instance.cust_healthcare_id = customer
+            # for field in customer_form.cleaned_data:
+            #     if customer_form.cleaned_data[field] not in [None, ""]:
+            #         setattr(customer_instance, field, customer_form.cleaned_data[field])
+            #
+            # for field in phone_formset.cleaned_data:
+            #     if phone_formset.cleaned_data[field] not in [None, ""]:
+            #         setattr(phone_instance, field, phone_formset.cleaned_data[field])
+            #
+            # for field in email_instance.cleaned_data:
+            #     if email_formset.cleaned_data[field] not in [None, ""]:
+            #         setattr(email_instance, field, email_formset.cleaned_data[field])
+            # customer_instance.save()
+            #
+            # phone_formset.save()
+            # email_formset.save()
+            #
+            # return redirect('customer_details', username=customer.username)
+            print("Customer instance data:", customer_instance.__dict__)
+            print("Phone instance data:", phone_instance.__dict__)
+            print("Email instance data:", email_instance.__dict__)
+            print("Insurance instance data:", ins_instance.__dict__)
+            customer_form.save()
+            phone_formset.save()
+            email_formset.save()
+            ins_formset.save()
+
+            return redirect('/healthrep')
+    else:
+        # Populate forms with existing data
+        customer_form = CustomerEditForm(instance=customer)
+        phone_formset = CustPhoneForm(instance=customer_phone)
+        email_formset = CustomerEmailForm(instance=customer_email)
+        ins_formset = CustomerInsuranceForm(instance=customer_insurance)
+
+    return render(request, 'edit_customer.html', {
+        'customer_form': customer_form,
+        'phone_formset': phone_formset,
+        'email_formset': email_formset,
+        'ins_formset': ins_formset,
+        'customer': customer,
+    })
     

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EDIT Customer</title>
+</head>
+<body>
+<form method="POST">
+    {% csrf_token %}
+{{ customer_form.as_p }}
+{#<br>#}
+{#<h1>NOW TIME FOR PHONE </h1>#}
+{#<br>#}
+    {% csrf_token %}
+{{ phone_formset.as_p }}
+{#<br>#}
+{#<br>#}
+{#<h1>NOW TIME FOR Email </h1>#}
+{#<br>#}
+        {% csrf_token %}
+{{ email_formset.as_p }}
+{#<br>#}
+{#<br>#}
+    {{ ins_formset.as_p }}
+<button type="submit">Save Changes</button>
+<a href="/healthrep/">Cancel</a>
+    </form>
+</body>
+</html>
