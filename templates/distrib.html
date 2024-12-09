@@ -76,7 +76,8 @@
                         <h5 id = "current_ingredients_header"></h5>
                         <!--For every ingredient associated with the selected medication, create a row. -->
                         {% for Ingredient in med_ingredients %}
-                            <p><button class = "ing_button" value = "{{Ingredient.iupac_name}}" style = "display: none">{{Ingredient.iupac_name}}</button></p> 
+                        <!--https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset-->
+                            <p><button class = "ing_button" data-medName = "{{Ingredient.med_name}}" data-iupacName = "{{Ingredient.iupac_name}}" style = "display: none">{{Ingredient.iupac_name}}</button></p> 
                         {% endfor %}
                     </div>
                 </div>
@@ -147,7 +148,7 @@
                   
                 //https://www.w3schools.com/jsref/jsref_filter.asp
                 //https://www.w3schools.com/jsref/jsref_map.asp
-                filtered_meds = med_ingredients.filter(selectMed).map(grabIupacNames);
+                filtered_meds = med_ingredients.filter(selectMed);
 
                 // Change the add new ingredients header
                 dynamic_header = document.getElementById("add_new_ingredients_header");
@@ -173,7 +174,7 @@
                 document.getElementById("form_med_name").value = medication;
 
                 //https://www.w3schools.com/jsref/jsref_filter.asp
-                filtered_meds = med_ingredients.filter(selectMed).map(grabIupacNames);
+                filtered_meds = med_ingredients.filter(selectMed);
 
                 // Change the add new ingredients header
                 dynamic_header = document.getElementById("add_new_ingredients_header");
@@ -216,8 +217,10 @@
 
         function ingredientsLoop(ingredient)
         {
-            med_flag = document.getElementById("med_flag");
-            if(filtered_meds.includes(ingredient.value))
+           
+            console.log(ingredient.dataset.medname)
+
+            if(ingredient.dataset.medname === med_flag.value)
             {
                 ingredient.style.display = "block";
             }
