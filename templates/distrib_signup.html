@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load django_bootstrap5 %}
+<head>
+    <meta charset="UTF-8">
+    <title>Disritributer signup</title>
+        {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+<form method="POST">
+    {% csrf_token %}
+{% bootstrap_field form.username %}
+{% bootstrap_field form.distributer_id %}
+{% bootstrap_field form.name %}
+{% bootstrap_field form.password %}
+{% bootstrap_button button_type="submit" content="Register Account" %}
+    </form>
+</body>
+</html>

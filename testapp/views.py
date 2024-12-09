@@ -83,6 +83,16 @@ def signup(request):
         form = SignupForm()
     return render(request,'signup.html', {'form':form})
 
+def distrib_signup(request):
+    if request.method == 'POST':
+        form = DistributerSignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = DistributerSignupForm()
+    return render(request,'distrib_signup.html',{'form':form})
+
 def user(request):
     cust_id = Customer.objects.get(username = request.session['username'])
     ingredients = Ingredient.objects.all()
@@ -404,4 +414,6 @@ def edit_customer(request, username):
         'ins_formset': ins_formset,
         'customer': customer,
     })
+
+
     
