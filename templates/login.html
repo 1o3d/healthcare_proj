@@ -20,7 +20,12 @@
                 </ul>
             {% endif %}
         {% csrf_token%}
-        {% bootstrap_form form %}
+        <div class="form-group">
+        {% bootstrap_field form.username %}
+    </div>
+    <div class="form-group">
+        {% bootstrap_field form.password %}
+    </div>
         {% bootstrap_button button_type="submit" content="Log in" %}
     </form>
 </body>
