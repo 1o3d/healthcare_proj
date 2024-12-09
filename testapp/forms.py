@@ -1,11 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-<<<<<<< HEAD
-from .models import  Customer, Medication, CustomerPhone, CustomerEmail, InsurancePlan, MedicationIngredients
-=======
-from .models import Customer, Medication, MedicationIngredients, Ingredient
-
->>>>>>> bf4651e01ecf16ecce4f0f567ecdc62938871520
+from .models import  Customer, Medication, CustomerPhone, CustomerEmail, InsurancePlan, MedicationIngredients, Ingredient
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100, required=True)
     password = forms.CharField(max_length=100, required=True)
