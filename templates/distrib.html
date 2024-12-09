@@ -37,8 +37,15 @@
                          <!--For every medication associated with the distributer, list it. -->
                         <input type = "hidden" value = "" id = "med_flag"> <!-- hidden for js access-->
                         {% for medication in meds %}
+                        <div style = "display: flex">
                             <!--Each button should serve as a filter for ingredients associated with the selected medicine-->
                             <button id = "med_filter" class = "med_button" type = "button"  onclick = "toggleIngredients('{{medication.med_name}}')">{{medication.med_name}}</button> 
+                            <form method = "post" action="/delete_med/">
+                                {% csrf_token%}
+                                <!--Log out of the account -->
+                                <button name = "del_med_button" value = "{{medication.med_name}}"type="submit" class="delete">X</button>
+                            </form>
+                        </div>
                         {% endfor %}
                     </div>
                 </div>
@@ -76,7 +83,15 @@
                         <h5 id = "current_ingredients_header"></h5>
                         <!--For every ingredient associated with the selected medication, create a row. -->
                         {% for Ingredient in med_ingredients %}
-                            <p><button class = "ing_button" value = "{{Ingredient.iupac_name}}" style = "display: none">{{Ingredient.iupac_name}}</button></p> 
+                        <!--https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset-->
+                            <div class = "ing_div" style = "display: none" data-medName = "{{Ingredient.med_name}}" data-iupacName = "{{Ingredient.iupac_name}}">
+                                <label class = "ing_label">{{Ingredient.iupac_name}}</label>
+                                <form method = "post" action="/delete_med_ing/">
+                                    {% csrf_token%}
+                                    <input name = "selected_ing" value = "{{Ingredient.iupac_name}} "type = "hidden">
+                                    <button name = "del_med_ing" value = "{{Ingredient.med_name}}"type="submit" class="delete_med_ing">X</button>
+                                </form>
+                            </div> 
                         {% endfor %}
                     </div>
                 </div>
@@ -126,10 +141,9 @@
         med_flag = document.getElementById("med_flag");
         med_ingredients = {{med_ingredients|safe}};
         //console.log(med_ingredients);
-        // Grab every instance of ing_button:
+        // Grab every instance of ing_label:
         // https://www.w3schools.com/jsref/met_document_queryselectorall.asp
-        ingredients = document.querySelectorAll(".ing_button");
-        filtered_meds = null;
+        ingredients = document.querySelectorAll(".ing_div")
         //https://www.w3schools.com/css/css_display_visibility.asp
         //https://www.geeksforgeeks.org/how-to-find-out-if-an-element-is-hidden-with-javascript/
         function toggleIngredients(medication) {
@@ -143,12 +157,6 @@
                 // Update the form's hidden fields:
                 document.getElementById("form_med_name").value = medication;
 
-                //console.log(medication);
-                  
-                //https://www.w3schools.com/jsref/jsref_filter.asp
-                //https://www.w3schools.com/jsref/jsref_map.asp
-                filtered_meds = med_ingredients.filter(selectMed).map(grabIupacNames);
-
                 // Change the add new ingredients header
                 dynamic_header = document.getElementById("add_new_ingredients_header");
                 dynamic_header.textContent = "Current Ingredients in " + medication + ":";
@@ -156,9 +164,6 @@
                 // Change the current ingredients header
                 dynamic_header_2 = document.getElementById("current_ingredients_header");
                 dynamic_header_2.textContent = "Current Ingredients in " + medication + ":";
-
-
-                //console.log(filtered_meds);
 
                 // use a for each loop:
                 // https://www.w3schools.com/jsref/jsref_foreach.asp
@@ -171,9 +176,6 @@
 
                 // Update the form's hidden fields:
                 document.getElementById("form_med_name").value = medication;
-
-                //https://www.w3schools.com/jsref/jsref_filter.asp
-                filtered_meds = med_ingredients.filter(selectMed).map(grabIupacNames);
 
                 // Change the add new ingredients header
                 dynamic_header = document.getElementById("add_new_ingredients_header");
@@ -199,27 +201,12 @@
           
         }
 
-        // filter method for medications
-        function selectMed(medication)
-        {
-            if(medication.med_name === med_flag.value)
-            {
-                return medication;
-            }
-        }
-
-        // mapping method for medications
-        function grabIupacNames(medication)
-        {
-            return medication.iupac_name;
-        }
-
         function ingredientsLoop(ingredient)
         {
-            med_flag = document.getElementById("med_flag");
-            if(filtered_meds.includes(ingredient.value))
+
+            if(ingredient.dataset.medname === med_flag.value)
             {
-                ingredient.style.display = "block";
+                ingredient.style.display = "flex";
             }
             else
             {

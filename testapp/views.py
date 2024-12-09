@@ -212,10 +212,10 @@ def distrib(request):
             # Although it's a foreign key of type CHAR. This is actually asking for a distributer to be assigned to.
             medication.distributer_id = dist_user
             medication.save() #Add the medication
-        elif ing_form.is_valid():
+        if ing_form.is_valid():
             ing_form.save()
 
-        elif med_ing_form.is_valid():
+        if med_ing_form.is_valid():
             medication_ingredient = med_ing_form.save(commit=False)
             medication_ingredient.distributer_id = dist_user
             medication_ingredient.save()
@@ -235,6 +235,21 @@ def distrib(request):
             'med_ingredients':list(med_ingredients)
         })
 
+def delete_med(request):
+    if request.method == "POST":
+        todelete = request.POST.get('del_med_button')
+        Medication.objects.filter(pk=todelete).delete()
+    return redirect('distrib')
+
+def delete_med_ing(request):
+    if request.method == "POST":
+        medication = request.POST.get('del_med_ing')
+        ingredient = request.POST.get('selected_ing')
+        # delete filtered med ingredients
+        filtered_meds = MedicationIngredients.objects.filter(med_name=medication)
+        filtered_meds.get(iupac_name = ingredient.strip()).delete()
+        
+    return redirect('distrib')
 
 def healthrep(request):
     rep = request.session.get('username', default=None)
