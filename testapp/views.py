@@ -26,7 +26,7 @@ def login(request):
             try:
                 invalidCred = False
                  # https://docs.djangoproject.com/en/5.1/topics/db/queries/
-                cust_user = Customer.objects.get(username = form_username)   # Syntax: <variable name> = <model name>.objects.get(<dbcolumn=value>)
+                cust_user = Customer.objects.get(username = form_username, password=form_password)   # Syntax: <variable name> = <model name>.objects.get(<dbcolumn=value>)
                 print(cust_user.first_name + ' ' + cust_user.last_name) # used for testing
 
                 # https://www.tutorialspoint.com/django/django_sessions.htm
@@ -41,7 +41,7 @@ def login(request):
                 # check for representative
                 try:
                     # invalidCred = False
-                    rep_user = HealthCareRepresentative.objects.get(username = form_username)
+                    rep_user = HealthCareRepresentative.objects.get(username = form_username, password=form_password)
                     print(rep_user.first_name + ' ' + rep_user.last_name)
                     request.session['username'] = form_username
                     request.session['usertype'] = 2
@@ -52,7 +52,7 @@ def login(request):
 
                     # check for distributer
                     try:
-                        dist_user = Distributer.objects.get(username = form_username)
+                        dist_user = Distributer.objects.get(username = form_username, password=form_password)
                         request.session['username'] = form_username
                         request.session['usertype'] = 3
                         return redirect('distrib')

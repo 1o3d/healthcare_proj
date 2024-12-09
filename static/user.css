@@ -105,6 +105,10 @@ body, html {
     width: 300px;
 }
 
+.form-group input {
+    width: 20%;
+}
+
 #Store {background-color: grey;}
 #Settings {background-color: lightgrey};
 #Customer {background-color: lightgrey};
