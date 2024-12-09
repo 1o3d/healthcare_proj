@@ -9,8 +9,8 @@ body, html {
     cursor: pointer;
     outline: none;
     border: 2px solid black;
+    float: left;
     color: black;
-    
 }
 
 .storetab {
@@ -53,9 +53,6 @@ body, html {
     background-color: lightgray;
     border: none;
 }
-.tabspacer {
-    grid-row:3;
-}
 
 .logouttab {
     grid-row:4;
@@ -73,11 +70,10 @@ body, html {
 }
 
 .sidebar {
-    display:grid;
-    grid-column: 1;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr 10fr 1fr;
-    background-color:lightgrey;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color:lightblue;
 }
 
 .mainpane {
@@ -132,11 +128,16 @@ body, html {
     display: none;
 }
 
-.inv_cell {
+.inv_cell, .supply_cell {
     border: 1px solid black;
     padding-right: 5px;
     height: 5vh;
 }
+
+.supply_cell {
+    display: flex;
+}
+
 .inv_row {
     justify-content:space-evenly 
 }

@@ -45,7 +45,7 @@ class CustomerInsuranceForm(forms.ModelForm):
     class Meta:
         model = InsurancePlan
         fields = ['coverage_type']
-class IngredientForm(ModelForm):
+class MedIngredientForm(ModelForm):
     class Meta:
         model = MedicationIngredients
         fields = ['med_name','iupac_name']
