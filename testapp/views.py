@@ -288,6 +288,16 @@ def customer_details(request, customer_username):
             for allergy in allergies
         ]
 
+
+    try:
+        custAllList = []
+        custAllergy = Allergy.objects.filter(cust_healthcare_id=custHealthID)
+        for i in custAllergy:
+            ing = Ingredient.objects.get(allergy=i)
+            custAllList.append(ing.common_name)
+    except Allergy.DoesNotExist:
+        custAllergies = 'No allergies :)'
+
     try:
         custInsList = []
         custInsurance = InsurancePlan.objects.filter(cust_healthcare_id=custHealthID)
@@ -301,7 +311,7 @@ def customer_details(request, customer_username):
         "last_name": customer.last_name,
         "phone": custPhone,
         "email": custEmail,
-        "allergies": custAllergies,
+        "allergies": custAllList,
         "healthcare_id": customer.alberta_healthcare_id,
         "insurance_plan": custInsList,
 
@@ -325,6 +335,16 @@ def edit_customer(request, username):
         customer_insurance = InsurancePlan.objects.get(cust_healthcare_id=customer.alberta_healthcare_id)
     except InsurancePlan.DoesNotExist:
         customer_insurance = None
+
+    # try:
+    #     customer_allergy = []
+    #     customer_allergy_List = Allergy.objects.filter(cust_healthcare_id=customer.alberta_healthcare_id)
+    #     for i in customer_allergy_List:
+    #         ing = Ingredient.objects.get(allergy=i)
+    #         customer_allergy.append(ing.ingredient)
+    #
+    # except Allergy.DoesNotExist:
+    #     customer_allergy = None
 
     if request.method == 'POST':
         # Handle form submission
