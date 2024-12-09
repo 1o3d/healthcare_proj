@@ -84,7 +84,88 @@ def signup(request):
     return render(request,'signup.html', {'form':form})
 
 def user(request):
-    return render(request, 'user.html',{'logged_in': request.session.get('username', default = None)})
+    cust_id = Customer.objects.get(username = request.session['username'])
+    ingredients = Ingredient.objects.all()
+    allergies = Allergy.objects.filter(cust_healthcare_id=cust_id)
+    prescriptions = Prescription.objects.filter(cust_healthcare_id=cust_id)
+    insurance = InsurancePlan.objects.filter(cust_healthcare_id=cust_id)
+    coverages = InsuranceCoverage.objects.filter(cust_healthcare_id=cust_id)
+    returnstruct = {
+        'logged_in': request.session.get('username', default = None),
+        'ingredients': ingredients,
+        'allergies': allergies,
+        'prescriptions': prescriptions,
+        'plans': insurance,
+        'covs': coverages
+    }
+    return render(request, 'user.html',returnstruct)
+
+def user_create_allergy(request):
+    cust_id = Customer.objects.get(username = request.session['username'])
+    if request.method == "POST":
+        symptoms_text = request.POST.get('sympinp')
+        ingredients_input_id = request.POST.get('ingrinput')
+        print("symptoms_text = " + symptoms_text)
+        print("ingredients_input_id = " + ingredients_input_id)
+        if symptoms_text and ingredients_input_id:
+            ingredients_id = Ingredient.objects.get(iupac_name=ingredients_input_id)
+            Allergy.objects.create(symptoms=symptoms_text,cust_healthcare_id=cust_id,ingredient_id=ingredients_id)
+    return redirect('user')
+
+def user_delete_allergy(request):
+    if request.method == "POST":
+        todelete = request.POST.get('delbutton')
+        print("deleting " + todelete)
+        Allergy.objects.filter(pk=todelete).delete()
+    return redirect('user')
+
+def user_create_pres(request):
+    cust_id = Customer.objects.get(username = request.session['username'])
+    if request.method == "POST":
+        pname = request.POST.get('presnameinput')
+        pdosage = request.POST.get('presamountinput')
+        refdate = request.POST.get('presrefilldate')
+        rxnum = request.POST.get('presrxinput')
+        print("pname = " + pname)
+        print("dosage = " + pdosage)
+        if pname and pdosage and refdate:
+            Prescription.objects.create(cust_healthcare_id=cust_id,prescription_name=pname,refill_date=refdate,dosage=pdosage,rx_number=rxnum)
+    return redirect('user')
+
+def user_delete_pres(request):
+    if request.method == "POST":
+        todelete = request.POST.get('presdelbutton')
+        print("deleting " + todelete)
+        Prescription.objects.filter(rx_number=todelete).delete()
+    return redirect('user')
+
+def user_create_insurance(request):
+    cust_id = Customer.objects.get(username = request.session['username'])
+    if request.method == "POST":
+        coveragetype = request.POST.get('insurancetypeinput')
+        if coveragetype:
+            InsurancePlan.objects.create(coverage_type=coveragetype,cust_healthcare_id=cust_id)
+    return redirect('user')
+
+def user_delete_insurance(request):
+    if request.method == "POST":
+        todelete = request.POST.get('plandelbutton')
+        InsurancePlan.objects.filter(health_insurance_field=todelete).delete()
+    return redirect('user')
+
+def user_create_coverage(request):
+    cust_id = Customer.objects.get(username = request.session['username'])
+    if request.method == "POST":
+        insplan = InsurancePlan.objects.get(health_insurance_field=request.POST.get('insselect'))
+        rxnum = Prescription.objects.get(rx_number=request.POST.get('covpres'))
+        covamt = request.POST.get('covperc')
+
+        if insplan and rxnum and covamt:
+            InsuranceCoverage.objects.create(health_insurance_field=insplan,rx_number=rxnum,coverage_amount=covamt,cust_healthcare_id=cust_id)
+    return redirect('user')
+
+def user_delete_coverage(request):
+    return
 
 def distrib(request):
     # grab the distributer data
@@ -94,7 +175,7 @@ def distrib(request):
     # grab every inventory that stores medication that this distributor has supplied.
     dist_inventories = Inventory.objects.filter(distributer_id = dist_user.distributer_id)
     # medication ingrediants
-    med_ingredients = MedicationIngredients.objects.filter(med_name__in = dist_medications)
+    med_ingredients = MedicationIngredients.objects.filter(med_name__in = dist_medications).values('med_name','iupac_name')
 
     # filter medication ingredients further using a get request:
     #selected_med = request.GET.get('medication')
@@ -103,6 +184,7 @@ def distrib(request):
     if request.method == 'POST':
         med_form = MedForm(request.POST)
         ing_form = IngredientForm(request.POST)
+        med_ing_form = MedicationIngredientForm(request.POST)
         if med_form.is_valid():
             # https://docs.djangoproject.com/en/5.1/topics/forms/modelforms/#:~:text=If%20you%20call%20save(),on%20the%20resulting%20model%20instance.
             # The form is created but not saved, we still need to input the dist id attribute
@@ -110,12 +192,17 @@ def distrib(request):
             # Although it's a foreign key of type CHAR. This is actually asking for a distributer to be assigned to.
             medication.distributer_id = dist_user
             medication.save() #Add the medication
-
-        if ing_form.is_valid():
+        elif ing_form.is_valid():
             ing_form.save()
+
+        elif med_ing_form.is_valid():
+            medication_ingredient = med_ing_form.save(commit=False)
+            medication_ingredient.distributer_id = dist_user
+            medication_ingredient.save()
     else:
         med_form = MedForm()
         ing_form = IngredientForm()
+        med_ing_form = MedicationIngredientForm()
     # send over the re;evant medications for render
     return render(request,'distrib.html',
         {
@@ -123,9 +210,9 @@ def distrib(request):
             'meds':dist_medications,
             'add_med_form':med_form,
             'add_ing_form':ing_form,
+            'add_med_ing_form':med_ing_form,
             'inventories':dist_inventories,
-            'med_ingredients':med_ingredients
-            #'selected_med': selected_med
+            'med_ingredients':list(med_ingredients)
         })
 
 
@@ -294,3 +381,4 @@ def edit_customer(request, username):
         'ins_formset': ins_formset,
         'customer': customer,
     })
+    

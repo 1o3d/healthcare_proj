@@ -1,6 +1,11 @@
 from django import forms
 from django.forms import ModelForm
+<<<<<<< HEAD
 from .models import  Customer, Medication, CustomerPhone, CustomerEmail, InsurancePlan, MedicationIngredients
+=======
+from .models import Customer, Medication, MedicationIngredients, Ingredient
+
+>>>>>>> bf4651e01ecf16ecce4f0f567ecdc62938871520
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100, required=True)
     password = forms.CharField(max_length=100, required=True)
@@ -48,4 +53,14 @@ class CustomerInsuranceForm(forms.ModelForm):
 class IngredientForm(ModelForm):
     class Meta:
         model = MedicationIngredients
+        fields = ['med_name','iupac_name']
+
+    med_name = forms.ModelChoiceField(
+        queryset=Medication.objects.all(),  # Grab every medication instance as this is a foreign key reference
+        widget=forms.HiddenInput(),         # Set this to hidden as it would be redundant for the distributer to fill this out
+        required=True)                      # Should be required in order to set a proper relation between Ingredient and Medication
+    
+class IngredientForm(ModelForm):
+    class Meta:
+        model = Ingredient
         fields = "__all__"

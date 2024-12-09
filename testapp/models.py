@@ -124,7 +124,7 @@ class Ingredient(models.Model):
 
 
 class InsuranceCoverage(models.Model):
-    health_insurance_field = models.OneToOneField('InsurancePlan', models.DO_NOTHING, db_column='Health Insurance #', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters. Field renamed because it ended with '_'. The composite primary key (Health Insurance #, Rx Number, Cust Healthcare ID) found, that is not supported. The first column is selected.
+    health_insurance_field = models.OneToOneField('InsurancePlan', models.CASCADE, db_column='Health Insurance #', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters. Field renamed because it ended with '_'. The composite primary key (Health Insurance #, Rx Number, Cust Healthcare ID) found, that is not supported. The first column is selected.
     rx_number = models.ForeignKey('Prescription', models.DO_NOTHING, db_column='Rx Number', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     cust_healthcare_id = models.ForeignKey(Customer, models.DO_NOTHING, db_column='Cust Healthcare ID', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     coverage_amount = models.IntegerField(db_column='Coverage Amount', blank=True, null=True) # Field name made lowercase. Field renamed to remove unsuitable characters.
@@ -205,7 +205,7 @@ class Inventory(models.Model):
 
 
 class Prescription(models.Model):
-    rx_number = models.AutoField(db_column='Rx Number', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters. The composite primary key (Rx Number, Cust Healthcare ID) found, that is not supported. The first column is selected.
+    rx_number = models.IntegerField(db_column='Rx Number', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters. The composite primary key (Rx Number, Cust Healthcare ID) found, that is not supported. The first column is selected.
     cust_healthcare_id = models.ForeignKey(Customer, models.DO_NOTHING, db_column='Cust Healthcare ID', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     dosage = models.IntegerField(db_column='Dosage')  # Field name made lowercase.
     refill_date = models.CharField(db_column='Refill Date', blank=True, null=True, max_length=10)  # Field name made lowercase. Field renamed to remove unsuitable characters.
