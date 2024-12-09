@@ -289,7 +289,10 @@ def customer_details(request, customer_username):
         ]
 
     try:
-        custInsurance = InsurancePlan.objects.get(cust_healthcare_id=custHealthID).coverage_type
+        custInsList = []
+        custInsurance = InsurancePlan.objects.filter(cust_healthcare_id=custHealthID)
+        for i in custInsurance:
+            custInsList.append(i.coverage_type)
     except InsurancePlan.DoesNotExist:
         custInsurance = 'No insurance plan'
 
@@ -300,7 +303,7 @@ def customer_details(request, customer_username):
         "email": custEmail,
         "allergies": custAllergies,
         "healthcare_id": customer.alberta_healthcare_id,
-        "insurance_plan": custInsurance,
+        "insurance_plan": custInsList,
 
     }
     return JsonResponse(data)
