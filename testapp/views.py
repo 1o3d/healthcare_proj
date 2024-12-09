@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from .forms import *
 from .models import *
+from django.db.models import Subquery
 from django.contrib import messages
 
 # Create your views here.
@@ -90,13 +91,21 @@ def user(request):
     prescriptions = Prescription.objects.filter(cust_healthcare_id=cust_id)
     insurance = InsurancePlan.objects.filter(cust_healthcare_id=cust_id)
     coverages = InsuranceCoverage.objects.filter(cust_healthcare_id=cust_id)
+    matching_prescs = Prescription.objects.filter(
+        cust_healthcare_id=cust_id
+    ).values('prescription_name')
+    presc_meds = Medication.objects.filter(
+        med_name__in=Subquery(matching_prescs)
+    )
+
     returnstruct = {
         'logged_in': request.session.get('username', default = None),
         'ingredients': ingredients,
         'allergies': allergies,
         'prescriptions': prescriptions,
         'plans': insurance,
-        'covs': coverages
+        'covs': coverages,
+        'meds': presc_meds
     }
     return render(request, 'user.html',returnstruct)
 

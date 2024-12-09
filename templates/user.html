@@ -18,24 +18,32 @@
             <button class="tab" onclick="getTab('Allergies', this)">Allergies</button>
             <button class="tab" onclick="getTab('Insurance', this)">Insurance</button>
             <button class="tab" onclick="getTab('Prescriptions', this)">Prescriptions</button>
+            <form method = "post" action = "/logout/" style="margin-top:auto">
+                {% csrf_token%}
+                <!--Log out of the account -->
+                <button class="tab" type="submit">Logout</button>
+            </form>
         </div>
         <div class="mainpane">
             <div id="Store" class="tabcontent">
                 <div class="storetitle"><center><h2>Storefront</h2></center></div>
                 <div class="leftstore">
-                    <div class="storesettings">
-                        <center>Store Search</center>
-                    </div>
                 </div>
-                <div class="storefront">
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
-                    a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>
+                {% for med in meds %}
+                    <div class="storefront" name="storefocus" id="{{ med.med_name }}" style="display:none; ">
+                        <h1>{{ med.med_name }}</h1>
+                        <hr>
+                        
+                    </div>
+                {% endfor %}
+                
+                <div class="storefront" style="display:flex; flex-wrap:wrap">
+                    {% for med in meds %}
+                    <button class="storemedbutton" style="margin: 3px; width:32%; height:200px; border: 2px solid blue"
+                    onClick="getMedFront('{{ med.med_name }}')">
+                        {{ med.med_name }}
+                    </button>
+                    {% endfor %}
                 </div>
                 <div class="rightstore">
                 </div>
@@ -177,25 +185,25 @@
 
     <script>
         function getTab(tabName, e) {
-            var i, tabcon, tablinks;
+            var i, tabcon;
             tabcon = document.getElementsByClassName("tabcontent");
-            for (i = 0; i < tabcon.length; i++) {
-                tabcon[i].style.display = "none";
-            }
-            tablinks = document.getElementsByClassName("tab");
             for (i = 0; i < tabcon.length; i++) {
                 tabcon[i].style.display = "none";
             }
 
             document.getElementById(tabName).style.display = "grid";
         }
+        function getMedFront(medname) {
+            var i, medcon;
+            medcon = document.getElementsByClassName("storefront");
+            for (i = 0; i < medcon.length; i++) {
+                medcon[i].style.display = "none";
+            }
+
+            document.getElementById(medname).style.display = "block";
+        }
         document.getElementById("default").click();
     </script>
-<form method = "post" action = "/logout/">
-            {% csrf_token%}
-            <!--Log out of the account -->
-            <button type="submit">Logout</button>
-        </form>
 
 </body>
 </html>
