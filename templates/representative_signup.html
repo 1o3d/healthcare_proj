@@ -10,9 +10,11 @@
 <body>
 <form method="POST">
     {% csrf_token %}
+{% bootstrap_field form.first_name %}
+{% bootstrap_field form.last_name %}
+{% bootstrap_field form.age %}
+{% bootstrap_field form.address %}
 {% bootstrap_field form.username %}
-{% bootstrap_field form.distributer_id %}
-{% bootstrap_field form.name %}
 {% bootstrap_field form.password %}
 {% bootstrap_button button_type="submit" content="Register Account" %}
     <a href="/signup/">Back</a>

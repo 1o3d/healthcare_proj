@@ -93,6 +93,16 @@ def distrib_signup(request):
         form = DistributerSignupForm()
     return render(request,'distrib_signup.html',{'form':form})
 
+def representative_signup(request):
+    if request.method == 'POST':
+        form = RepresentitiveSignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = RepresentitiveSignupForm()
+    return render(request,'representative_signup.html',{'form':form})
+
 def user(request):
     cust_id = Customer.objects.get(username = request.session['username'])
     ingredients = Ingredient.objects.all()

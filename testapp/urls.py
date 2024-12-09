@@ -13,6 +13,7 @@ urlpatterns = [
     path('healthrep/', views.healthrep, name = 'healthrep'),
     path('distrib/', views.distrib, name = 'distrib'),
     path('distrib_signup/', views.distrib_signup, name = 'distrib_signup'),
+    path('representative_signup/', views.representative_signup, name = 'representative_signup'),
     path('customer/<str:customer_username>/', views.customer_details, name='customer_details'),
     path('healthrep/<str:username>/edit', views.edit_customer, name='edit_customer'),
     path('user_create_allergy/', views.user_create_allergy, name='user_create_allergy'),
