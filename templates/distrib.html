@@ -144,12 +144,6 @@
                 // Update the form's hidden fields:
                 document.getElementById("form_med_name").value = medication;
 
-                //console.log(medication);
-                  
-                //https://www.w3schools.com/jsref/jsref_filter.asp
-                //https://www.w3schools.com/jsref/jsref_map.asp
-                filtered_meds = med_ingredients.filter(selectMed);
-
                 // Change the add new ingredients header
                 dynamic_header = document.getElementById("add_new_ingredients_header");
                 dynamic_header.textContent = "Current Ingredients in " + medication + ":";
@@ -157,9 +151,6 @@
                 // Change the current ingredients header
                 dynamic_header_2 = document.getElementById("current_ingredients_header");
                 dynamic_header_2.textContent = "Current Ingredients in " + medication + ":";
-
-
-                //console.log(filtered_meds);
 
                 // use a for each loop:
                 // https://www.w3schools.com/jsref/jsref_foreach.asp
@@ -172,9 +163,6 @@
 
                 // Update the form's hidden fields:
                 document.getElementById("form_med_name").value = medication;
-
-                //https://www.w3schools.com/jsref/jsref_filter.asp
-                filtered_meds = med_ingredients.filter(selectMed);
 
                 // Change the add new ingredients header
                 dynamic_header = document.getElementById("add_new_ingredients_header");
