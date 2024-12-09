@@ -4,6 +4,7 @@ from .forms import *
 from .models import *
 from django.db.models import Subquery
 from django.contrib import messages
+import datetime
 
 # Create your views here.
 def view_pharm(request):
@@ -117,8 +118,6 @@ def user(request):
     presc_meds = Medication.objects.filter(
         med_name__in=Subquery(matching_prescs)
     )
-    free_meds = Medication.objects.filter(needs_prescription=0)
-    presc_meds = presc_meds.union(free_meds)
     allergic_meds = Medication.objects.filter(
         med_name__in=Subquery(
             MedicationIngredients.objects.filter(
@@ -129,6 +128,7 @@ def user(request):
         )
     )
     inventories = Inventory.objects.all()
+    orders = PrescriptionOrder.objects.filter(cust_healthcare_id=cust_id)
 
     returnstruct = {
         'logged_in': request.session.get('username', default = None),
@@ -139,8 +139,10 @@ def user(request):
         'covs': coverages,
         'meds': presc_meds,
         'allrgmeds': allergic_meds,
-        'inventories': inventories
+        'inventories': inventories,
+        'orders': orders
     }
+    print(orders)
     return render(request, 'user.html',returnstruct)
 
 def user_create_allergy(request):
@@ -205,6 +207,28 @@ def user_create_coverage(request):
 
         if insplan and rxnum and covamt:
             InsuranceCoverage.objects.create(health_insurance_field=insplan,rx_number=rxnum,coverage_amount=covamt,cust_healthcare_id=cust_id)
+    return redirect('user')
+
+def user_make_order(request):
+    cust_id = Customer.objects.get(username = request.session['username'])
+    if request.method == "POST": 
+        inventory = Inventory.objects.get(inv_id = request.POST.get('orderbutton'))
+        orderpres = Prescription.objects.get(rx_number = request.POST.get('orderpres'))
+        ord_date = datetime.date.today()
+        exp_date = ord_date + datetime.timedelta(days=30)
+
+        if inventory  and orderpres and ord_date and exp_date:
+            PrescriptionOrder.objects.create(rx_number=orderpres,cust_healthcare_id=cust_id,inv_id=inventory,order_date=ord_date,expiry_date=exp_date)
+
+    return redirect('user')
+
+def user_cancel_order(request):
+    cust_id = Customer.objects.get(username = request.session['username'])
+    if request.method == "POST": 
+        order = request.POST.get('ordercancelbutton')
+        if order:
+            PrescriptionOrder.objects.filter(rx_number=order).delete()
+
     return redirect('user')
 
 def user_delete_coverage(request):

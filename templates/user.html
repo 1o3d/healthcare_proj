@@ -1,4 +1,5 @@
 {% load static %}
+{% load math_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,6 +19,7 @@
             <button class="tab" onclick="getTab('Allergies', this)">Allergies</button>
             <button class="tab" onclick="getTab('Insurance', this)">Insurance</button>
             <button class="tab" onclick="getTab('Prescriptions', this)">Prescriptions</button>
+            <button class="tab" onclick="getTab('Orders', this)">Orders</button>
             <form method = "post" action = "/logout/" style="margin-top:auto">
                 {% csrf_token%}
                 <!--Log out of the account -->
@@ -32,17 +34,45 @@
                 {% for med in meds %}
                     <div class="storefront" name="storefocus" id="{{ med.med_name }}" style="display:none; ">
                         <h1>{{ med.med_name }}</h1>
+                        Made by {{ med.distributer_id.name }}
                         <hr>
                         {% if med in allrgmeds %}
                         <label style="color:red"><strong>Allergy Status: You are allergic to this medication!</strong></label><br>
                         {% else %}
                         Allergy Status: No allergies found for this medication. <br>
                         {% endif %}
-                        {% for inventory in inventories %}
-                        {% endfor %}
                         <hr>
                         <button onclick="goBackToMainStore()">Back to Store</button>
-                        
+                        <hr>
+                        <h3>Available Pharmacies:</h3>
+                        {% for inventory in inventories %}
+                            {% if med == inventory.med_name %}
+                                <div style="margin:20px; padding:10px; border: 2px solid red; width: 50%;
+                                background-color: white">
+                                    Pharmacy Location: {{ inventory.pharmacy_location }}<br>
+                                    Price Per Unit: {{ inventory.unit_price }}<br>
+                                    Stock left: {{ inventory.amount_left }}
+                                    <form method='post' action="/user_make_order/">
+                                        {% csrf_token %}
+                                        <br>
+                                        Prescription:
+                                        <select name="orderpres">
+                                            <option value="" selected disabled hidden>Select a prescription</option>
+                                            {% for pres in prescriptions %}
+                                            {% if pres.prescription_name == med.med_name and pres.dosage <= inventory.amount_left %}
+                                            <option value="{{ pres.rx_number }}">{{ pres.prescription_name }} - Rx: {{pres.rx_number}} - Amount: {{pres.dosage}}</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                        <br>
+                                        <button name="orderbutton" value="{{ inventory.pk }}">
+                                            Confirm Order
+                                        </button>
+                                    </form>
+                                </div> 
+                            {% endif %}
+                        {% endfor %}
+                        <hr>
                     </div>
                 {% endfor %}
                 
@@ -50,7 +80,7 @@
                     {% for med in meds %}
                     <button class="storemedbutton" style="margin: 3px; width:32%; height:200px; border: 2px solid blue"
                     onClick="getMedFront('{{ med.med_name }}')">
-                        {{ med.med_name }}
+                        <h2>{{ med.med_name }}</h2>
                     </button>
                     {% endfor %}
                 </div>
@@ -186,8 +216,36 @@
                         </div>
                     {% endfor %}
                 </div>
-                
-                
+            </div>
+            <div id="Orders" class="tabcontent">
+                <div class="ordcontent">
+                    <h3>Orders tab</h3>
+                    {% for order in orders %}
+                    <div style="margin:20px; border: 2px solid red; padding:5px; background-color:lightgray; width:300px;
+                    padding:20px">
+                        <strong>Order {{ forloop.counter }}</strong><br>
+                        Medication: {{order.rx_number.prescription_name}} - Rx: {{order.rx_number.pk}}<br>
+                        Amount: {{order.rx_number.dosage}}<br>
+                        Pharmacy: {{order.inv_id.pharmacy_location}}<br>
+                        Order date: {{order.order_date}}<br>
+                        Expiry date: {{order.expiry_date}}<br>
+                        Cost (no coverage): ${{ order.inv_id.unit_price|multiply:order.rx_number.dosage }}<br>
+                        {% for cov in covs %}
+                        {% if cov.rx_number == order.rx_number %}
+                        Coverage: {{cov.coverage_amount}}%<br>
+                        Cost after coverage: ${% calccovcost order.rx_number.dosage order.inv_id.unit_price cov.coverage_amount %}
+                        {% endif %}
+                        {% endfor %}
+                        
+                        
+                        <form method="post" action="/user_cancel_order/">
+                            {% csrf_token %}
+                            <button name="ordercancelbutton" value="{{ order.pk }}">Cancel Order {{forloop.counter}}</button>
+                        </form>
+                    </div>
+                    
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
