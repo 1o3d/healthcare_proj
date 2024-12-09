@@ -21,9 +21,32 @@ body, html {
     grid-row:2;
 }
 
-.med_button,.ing_button{
+.delete {
+    margin-left: auto; 
+    color: lightgray;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .delete_med_ing {
+    margin-left: auto;
+    color: transparent;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .delete:hover, .delete_med_ing:hover {
+    color: red;
+  }
+
+.med_button,.ing_label{
     background-color: transparent;
     border: none;
+    text-align: left;
 }
 
 .med_button:hover {
