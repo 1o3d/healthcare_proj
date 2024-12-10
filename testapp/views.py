@@ -271,14 +271,15 @@ def distrib(request):
     if request.method == 'POST':
         med_form = MedForm(request.POST)
         ing_form = IngredientForm(request.POST)
-        med_ing_form = IngredientForm(request.POST)
+        med_ing_form = MedIngredientForm(request.POST)
         if med_form.is_valid():
             # https://docs.djangoproject.com/en/5.1/topics/forms/modelforms/#:~:text=If%20you%20call%20save(),on%20the%20resulting%20model%20instance.
             # The form is created but not saved, we still need to input the dist id attribute
             medication = med_form.save(commit=False)
             # Although it's a foreign key of type CHAR. This is actually asking for a distributer to be assigned to.
             medication.distributer_id = dist_user
-            medication.save() #Add the medication
+            if(medication.med_name != ""):
+                medication.save() #Add the medication
         if ing_form.is_valid():
             ing_form.save()
 
@@ -289,7 +290,7 @@ def distrib(request):
     else:
         med_form = MedForm()
         ing_form = IngredientForm()
-        med_ing_form = IngredientForm()
+        med_ing_form = MedIngredientForm()
     # send over the re;evant medications for render
     return render(request,'distrib.html',
         {
@@ -315,6 +316,20 @@ def delete_med_ing(request):
         # delete filtered med ingredients
         filtered_meds = MedicationIngredients.objects.filter(med_name=medication)
         filtered_meds.get(iupac_name = ingredient.strip()).delete()
+        
+    return redirect('distrib')
+
+def supply_inventory(request):
+    if request.method == "POST":
+        qty = request.POST.get('Qty')
+        inventory = request.POST.get('supply_inv_button')
+        
+        # delete filtered med ingredients
+        selected_inventory = Inventory.objects.get(inv_id = inventory)
+
+        print("Selected_in id:" + str(selected_inventory.inv_id) + "\tamount_left: " + str(selected_inventory.amount_left))
+        selected_inventory.amount_left = selected_inventory.amount_left + int(qty)
+        selected_inventory.save()
         
     return redirect('distrib')
 
