@@ -8,4 +8,4 @@ def multiply(value,arg):
 
 @register.simple_tag
 def calccovcost(amt, price, cov):
-    return float(amt) * float(price) * float((cov/100))
+    return float(amt) * float(price) * float(1 - (cov/100))

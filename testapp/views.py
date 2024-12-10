@@ -4,6 +4,7 @@ from .forms import *
 from .models import *
 from django.db.models import Subquery
 from django.contrib import messages
+from django.db import IntegrityError
 import datetime
 from hashlib import sha256
 
@@ -160,7 +161,7 @@ def user(request):
         'meds': presc_meds,
         'allrgmeds': allergic_meds,
         'inventories': inventories,
-        'orders': orders
+        'orders': orders,
     }
     print(orders)
     return render(request, 'user.html',returnstruct)
@@ -174,7 +175,10 @@ def user_create_allergy(request):
         print("ingredients_input_id = " + ingredients_input_id)
         if symptoms_text and ingredients_input_id:
             ingredients_id = Ingredient.objects.get(iupac_name=ingredients_input_id)
-            Allergy.objects.create(symptoms=symptoms_text,cust_healthcare_id=cust_id,ingredient_id=ingredients_id)
+            try:
+                Allergy.objects.create(symptoms=symptoms_text,cust_healthcare_id=cust_id,ingredient_id=ingredients_id)
+            except IntegrityError:
+                messages.error(request, "ERROR: That symptom already exists! Try another name.")
     return redirect('user')
 
 def user_delete_allergy(request):
@@ -194,7 +198,10 @@ def user_create_pres(request):
         print("pname = " + pname)
         print("dosage = " + pdosage)
         if pname and pdosage and refdate:
-            Prescription.objects.create(cust_healthcare_id=cust_id,prescription_name=pname,refill_date=refdate,dosage=pdosage,rx_number=rxnum)
+            try:
+                Prescription.objects.create(cust_healthcare_id=cust_id,prescription_name=pname,refill_date=refdate,dosage=pdosage,rx_number=rxnum)
+            except IntegrityError:
+                messages.error(request, 'ERROR: Rx number is already being used!')
     return redirect('user')
 
 def user_delete_pres(request):
@@ -209,7 +216,11 @@ def user_create_insurance(request):
     if request.method == "POST":
         coveragetype = request.POST.get('insurancetypeinput')
         if coveragetype:
-            InsurancePlan.objects.create(coverage_type=coveragetype,cust_healthcare_id=cust_id)
+            try :
+                InsurancePlan.objects.create(coverage_type=coveragetype,cust_healthcare_id=cust_id)
+            except IntegrityError:
+                print("INTEGRITY ERROR IN INSURANCE")
+                messages.error(request, 'ERROR: Coverage type already exists.')
     return redirect('user')
 
 def user_delete_insurance(request):
@@ -226,7 +237,11 @@ def user_create_coverage(request):
         covamt = request.POST.get('covperc')
 
         if insplan and rxnum and covamt:
-            InsuranceCoverage.objects.create(health_insurance_field=insplan,rx_number=rxnum,coverage_amount=covamt,cust_healthcare_id=cust_id)
+            try:
+                InsuranceCoverage.objects.create(health_insurance_field=insplan,rx_number=rxnum,coverage_amount=covamt,cust_healthcare_id=cust_id)
+            except IntegrityError:
+                print("COVERAGE INTEGRITY ERROR")
+                messages.error(request, 'ERROR: Plan already has a coverage assigned.')
     return redirect('user')
 
 def user_make_order(request):
@@ -238,8 +253,11 @@ def user_make_order(request):
         exp_date = ord_date + datetime.timedelta(days=30)
 
         if inventory  and orderpres and ord_date and exp_date:
-            PrescriptionOrder.objects.create(rx_number=orderpres,cust_healthcare_id=cust_id,inv_id=inventory,order_date=ord_date,expiry_date=exp_date)
-
+            try:
+                PrescriptionOrder.objects.create(rx_number=orderpres,cust_healthcare_id=cust_id,inv_id=inventory,order_date=ord_date,expiry_date=exp_date)
+            except IntegrityError:
+                messages.error(request, "ERROR: You've already made an order for this prescription!")
+                print("order integrity error")
     return redirect('user')
 
 def user_cancel_order(request):
