@@ -48,6 +48,9 @@ class HealthCareRepresentative(models.Model):
         managed = False
         db_table = 'Health Care Representative'
 
+    def __str__(self):
+        return self.first_name + self.last_name
+
 class Customer(models.Model):
     alberta_healthcare_id = models.CharField(db_column='Alberta Healthcare ID', primary_key=True, blank=True, null=False, max_length=10)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     first_name = models.CharField(db_column='First name', max_length=100)  # Field name made lowercase. Field renamed to remove unsuitable characters.
