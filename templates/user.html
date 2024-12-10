@@ -19,7 +19,14 @@
             <button class="tab" onclick="getTab('Allergies', this)">Allergies</button>
             <button class="tab" onclick="getTab('Insurance', this)">Insurance</button>
             <button class="tab" onclick="getTab('Prescriptions', this)">Prescriptions</button>
-            <button class="tab" onclick="getTab('Orders', this)">Orders</button>
+            <button class="tab" onclick="getTab('Orders', this)">Orders</button><br>
+            {% if messages %}
+            <div class="messages" style="color:red">
+                {% for message in messages %}
+                <strong><li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li></strong>
+                {% endfor %}
+            </div>
+            {% endif %}
             <form method = "post" action = "/logout/" style="margin-top:auto">
                 {% csrf_token%}
                 <!--Log out of the account -->

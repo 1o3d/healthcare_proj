@@ -4,11 +4,16 @@ from .forms import *
 from .models import *
 from django.db.models import Subquery
 from django.contrib import messages
+from django.db import IntegrityError
 import datetime
+from hashlib import sha256
 
 # Create your views here.
 def view_pharm(request):
     return HttpResponse('Hello World')
+
+def encode(password):
+    return sha256(password.encode('utf-8')).hexdigest()
 
 
 def home(request):
@@ -24,11 +29,12 @@ def login(request):
             form_password = form.cleaned_data['password']
 
             # check for customer first
+            hashed = encode(form_password)
 
             try:
                 invalidCred = False
                  # https://docs.djangoproject.com/en/5.1/topics/db/queries/
-                cust_user = Customer.objects.get(username = form_username, password=form_password)   # Syntax: <variable name> = <model name>.objects.get(<dbcolumn=value>)
+                cust_user = Customer.objects.get(username = form_username, password=hashed)   # Syntax: <variable name> = <model name>.objects.get(<dbcolumn=value>)
                 print(cust_user.first_name + ' ' + cust_user.last_name) # used for testing
 
                 # https://www.tutorialspoint.com/django/django_sessions.htm
@@ -43,7 +49,7 @@ def login(request):
                 # check for representative
                 try:
                     # invalidCred = False
-                    rep_user = HealthCareRepresentative.objects.get(username = form_username, password=form_password)
+                    rep_user = HealthCareRepresentative.objects.get(username = form_username, password=hashed)
                     print(rep_user.first_name + ' ' + rep_user.last_name)
                     request.session['username'] = form_username
                     request.session['usertype'] = 2
@@ -54,7 +60,7 @@ def login(request):
 
                     # check for distributer
                     try:
-                        dist_user = Distributer.objects.get(username = form_username, password=form_password)
+                        dist_user = Distributer.objects.get(username = form_username, password=hashed)
                         request.session['username'] = form_username
                         request.session['usertype'] = 3
                         return redirect('distrib')
@@ -79,7 +85,12 @@ def signup(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
-            form.save()
+            password = form.cleaned_data['password']
+            hashed = encode(password)
+
+            user = form.save(commit=False)
+            user.password = hashed
+            user.save()
             return redirect('login')
     else:
         form = SignupForm()
@@ -89,7 +100,12 @@ def distrib_signup(request):
     if request.method == 'POST':
         form = DistributerSignupForm(request.POST)
         if form.is_valid():
-            form.save()
+            password = form.cleaned_data['password']
+            hashed = encode(password)
+
+            distributer = form.save(commit=False)
+            distributer.password = hashed
+            distributer.save()
             return redirect('login')
     else:
         form = DistributerSignupForm()
@@ -99,7 +115,12 @@ def representative_signup(request):
     if request.method == 'POST':
         form = RepresentitiveSignupForm(request.POST)
         if form.is_valid():
-            form.save()
+            password = form.cleaned_data['password']
+            hashed = encode(password)
+
+            representative = form.save(commit=False)
+            representative.password = hashed
+            representative.save()
             return redirect('login')
     else:
         form = RepresentitiveSignupForm()
@@ -140,7 +161,7 @@ def user(request):
         'meds': presc_meds,
         'allrgmeds': allergic_meds,
         'inventories': inventories,
-        'orders': orders
+        'orders': orders,
     }
     print(orders)
     return render(request, 'user.html',returnstruct)
@@ -154,7 +175,10 @@ def user_create_allergy(request):
         print("ingredients_input_id = " + ingredients_input_id)
         if symptoms_text and ingredients_input_id:
             ingredients_id = Ingredient.objects.get(iupac_name=ingredients_input_id)
-            Allergy.objects.create(symptoms=symptoms_text,cust_healthcare_id=cust_id,ingredient_id=ingredients_id)
+            try:
+                Allergy.objects.create(symptoms=symptoms_text,cust_healthcare_id=cust_id,ingredient_id=ingredients_id)
+            except IntegrityError:
+                messages.error(request, "ERROR: That symptom already exists! Try another name.")
     return redirect('user')
 
 def user_delete_allergy(request):
@@ -174,7 +198,10 @@ def user_create_pres(request):
         print("pname = " + pname)
         print("dosage = " + pdosage)
         if pname and pdosage and refdate:
-            Prescription.objects.create(cust_healthcare_id=cust_id,prescription_name=pname,refill_date=refdate,dosage=pdosage,rx_number=rxnum)
+            try:
+                Prescription.objects.create(cust_healthcare_id=cust_id,prescription_name=pname,refill_date=refdate,dosage=pdosage,rx_number=rxnum)
+            except IntegrityError:
+                messages.error(request, 'ERROR: Rx number is already being used!')
     return redirect('user')
 
 def user_delete_pres(request):
@@ -189,7 +216,11 @@ def user_create_insurance(request):
     if request.method == "POST":
         coveragetype = request.POST.get('insurancetypeinput')
         if coveragetype:
-            InsurancePlan.objects.create(coverage_type=coveragetype,cust_healthcare_id=cust_id)
+            try :
+                InsurancePlan.objects.create(coverage_type=coveragetype,cust_healthcare_id=cust_id)
+            except IntegrityError:
+                print("INTEGRITY ERROR IN INSURANCE")
+                messages.error(request, 'ERROR: Coverage type already exists.')
     return redirect('user')
 
 def user_delete_insurance(request):
@@ -206,7 +237,11 @@ def user_create_coverage(request):
         covamt = request.POST.get('covperc')
 
         if insplan and rxnum and covamt:
-            InsuranceCoverage.objects.create(health_insurance_field=insplan,rx_number=rxnum,coverage_amount=covamt,cust_healthcare_id=cust_id)
+            try:
+                InsuranceCoverage.objects.create(health_insurance_field=insplan,rx_number=rxnum,coverage_amount=covamt,cust_healthcare_id=cust_id)
+            except IntegrityError:
+                print("COVERAGE INTEGRITY ERROR")
+                messages.error(request, 'ERROR: Plan already has a coverage assigned.')
     return redirect('user')
 
 def user_make_order(request):
@@ -218,8 +253,11 @@ def user_make_order(request):
         exp_date = ord_date + datetime.timedelta(days=30)
 
         if inventory  and orderpres and ord_date and exp_date:
-            PrescriptionOrder.objects.create(rx_number=orderpres,cust_healthcare_id=cust_id,inv_id=inventory,order_date=ord_date,expiry_date=exp_date)
-
+            try:
+                PrescriptionOrder.objects.create(rx_number=orderpres,cust_healthcare_id=cust_id,inv_id=inventory,order_date=ord_date,expiry_date=exp_date)
+            except IntegrityError:
+                messages.error(request, "ERROR: You've already made an order for this prescription!")
+                print("order integrity error")
     return redirect('user')
 
 def user_cancel_order(request):

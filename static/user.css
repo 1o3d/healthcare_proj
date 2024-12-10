@@ -43,6 +43,14 @@ body, html {
     grid-template-rows: 1fr 6fr 1fr;
 }
 
+.tabcontent1 {
+    height:100vh;
+    width:100%;
+    grid-template-columns: 1fr 8fr 1fr;
+    grid-template-rows: 1fr 6fr 1fr;
+
+}
+
 .leftstore {
     grid-column: 1;
     grid-row: 2;
@@ -64,6 +72,34 @@ body, html {
     border: 3px solid black;
 }
 
+.storefront1 {
+    grid-column: 2;
+    grid-row: 2;
+    align-content: flex-start;
+    gap: 0px;
+    background-color: lightgrey;
+    overflow-y: auto;
+    padding: 7px 10px;
+    height: 90%; /* Matches the height of `storesettings` */
+    width: 100%;
+    border: 3px solid black;
+    margin-left: 60px;
+}
+
+.storesettings1 {
+    padding: 20px; /* Adjust padding for better alignment */
+    border: 3px solid black;
+    background-color: white;
+    grid-column: 2;
+    grid-row: 2;
+    overflow-y: auto; /* Maintain scrollability */
+    height: 90%; /* Matches the height of other sections */
+    width: 100%; /* Fills the available space */
+    display: flex;
+    flex-direction: column; /* Ensures content is aligned properly */
+    justify-content: flex-start; /* Align content to the top */
+}
+
 .rightstore {
     grid-column: 3;
     grid-row: 2;
@@ -82,6 +118,7 @@ body, html {
     grid-row: 2;
     overflow-y: scroll;
     height: 70vh;
+    width: 50%;
 }
 .cust_clicky {
     width: 10%;
