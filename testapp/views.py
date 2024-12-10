@@ -5,10 +5,14 @@ from .models import *
 from django.db.models import Subquery
 from django.contrib import messages
 import datetime
+from hashlib import sha256
 
 # Create your views here.
 def view_pharm(request):
     return HttpResponse('Hello World')
+
+def encode(password):
+    return sha256(password.encode('utf-8')).hexdigest()
 
 
 def home(request):
@@ -24,11 +28,12 @@ def login(request):
             form_password = form.cleaned_data['password']
 
             # check for customer first
+            hashed = encode(form_password)
 
             try:
                 invalidCred = False
                  # https://docs.djangoproject.com/en/5.1/topics/db/queries/
-                cust_user = Customer.objects.get(username = form_username, password=form_password)   # Syntax: <variable name> = <model name>.objects.get(<dbcolumn=value>)
+                cust_user = Customer.objects.get(username = form_username, password=hashed)   # Syntax: <variable name> = <model name>.objects.get(<dbcolumn=value>)
                 print(cust_user.first_name + ' ' + cust_user.last_name) # used for testing
 
                 # https://www.tutorialspoint.com/django/django_sessions.htm
@@ -43,7 +48,7 @@ def login(request):
                 # check for representative
                 try:
                     # invalidCred = False
-                    rep_user = HealthCareRepresentative.objects.get(username = form_username, password=form_password)
+                    rep_user = HealthCareRepresentative.objects.get(username = form_username, password=hashed)
                     print(rep_user.first_name + ' ' + rep_user.last_name)
                     request.session['username'] = form_username
                     request.session['usertype'] = 2
@@ -54,7 +59,7 @@ def login(request):
 
                     # check for distributer
                     try:
-                        dist_user = Distributer.objects.get(username = form_username, password=form_password)
+                        dist_user = Distributer.objects.get(username = form_username, password=hashed)
                         request.session['username'] = form_username
                         request.session['usertype'] = 3
                         return redirect('distrib')
@@ -79,7 +84,12 @@ def signup(request):
     if request.method == 'POST':
         form = SignupForm(request.POST)
         if form.is_valid():
-            form.save()
+            password = form.cleaned_data['password']
+            hashed = encode(password)
+
+            user = form.save(commit=False)
+            user.password = hashed
+            user.save()
             return redirect('login')
     else:
         form = SignupForm()
@@ -89,7 +99,12 @@ def distrib_signup(request):
     if request.method == 'POST':
         form = DistributerSignupForm(request.POST)
         if form.is_valid():
-            form.save()
+            password = form.cleaned_data['password']
+            hashed = encode(password)
+
+            distributer = form.save(commit=False)
+            distributer.password = hashed
+            distributer.save()
             return redirect('login')
     else:
         form = DistributerSignupForm()
@@ -99,7 +114,12 @@ def representative_signup(request):
     if request.method == 'POST':
         form = RepresentitiveSignupForm(request.POST)
         if form.is_valid():
-            form.save()
+            password = form.password
+            hashed = encode(password)
+
+            representative = form.save(commit=False)
+            representative.password = hashed
+            representative.save()
             return redirect('login')
     else:
         form = RepresentitiveSignupForm()

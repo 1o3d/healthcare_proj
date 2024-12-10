@@ -17,7 +17,7 @@
         <div class="sidebar">
             <button class="tab" id="default" onclick="getTab('Store', this)">Home</button>
             <button class="tab" onclick="getTab('Customer', this)">Add Customers</button>
-            <button class="tab" onclick="getTab('Settings', this)">Settings</button>
+{#            <button class="tab" onclick="getTab('Settings', this)">Settings</button>#}
 
         </div>
         <div class="mainpane">
@@ -29,8 +29,8 @@
                 <div class="storetitle"><center><h2>Customer Details</h2></center></div>
                 <div class="leftstore">
 
-                    <div class="storesettings">
-                        <h3>Customer List</h3>
+                    <div class="storesettings1">
+                        <h3>Customers</h3>
                         <ul>
                             {% for customer in customers %}
                                 <li class = "cust_clicky" onclick="fetchCustomerDetails('{{ customer.username }}')" style="cursor: pointer;">
@@ -44,7 +44,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="storefront" id="customerDetails">
+                <div class="storefront1" id="customerDetails">
                     <p>Select a customer to view their details here.</p>
                 </div>
                 <div class="rightstore">
@@ -54,7 +54,7 @@
                 <h3>Settings</h3>
             </div>
         <div>
-            <div id="Customer" class="tabcontent">
+            <div id="Customer" class="tabcontent" style = "display: block;">
 {#                <h3>Add new customer</h3>#}
             <button class="tab" onclick="getTab('linkCustomer', this)">Link existing customer</button>
 {#            <button class="tab" onclick="getTab('editCustomer', this)">Edit customer</button>#}
@@ -71,7 +71,8 @@
             </div>
 
             <div id ="linkCustomer" class = "tabcontent">
-                <h3>link an existing customer</h3>
+                <div><h3>link customer</h3></div>
+
                 <form method="POST">
                     {% csrf_token %}
                     {{ form }}

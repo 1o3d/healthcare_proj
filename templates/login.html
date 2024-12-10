@@ -21,6 +21,7 @@
             {% endif %}
         {% csrf_token%}
         <div class="form-group">
+            {% csrf_token %}
         {% bootstrap_field form.username %}
     </div>
     <div class="form-group">
