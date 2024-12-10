@@ -125,6 +125,9 @@ class Ingredient(models.Model):
         managed = False
         db_table = 'Ingredient'
 
+    def __str__(self):
+        return str(self.iupac_name)
+
 
 class InsuranceCoverage(models.Model):
     health_insurance_field = models.OneToOneField('InsurancePlan', models.CASCADE, db_column='Health Insurance #', primary_key=True, blank=True, null=False)  # Field name made lowercase. Field renamed to remove unsuitable characters. Field renamed because it ended with '_'. The composite primary key (Health Insurance #, Rx Number, Cust Healthcare ID) found, that is not supported. The first column is selected.
