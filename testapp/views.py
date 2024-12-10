@@ -244,7 +244,9 @@ def distrib(request):
     # medication ingrediants
     med_ingredients = MedicationIngredients.objects.filter(med_name__in = dist_medications).values('med_name','iupac_name')
 
-    # filter medication ingredients further using a get request:
+    # Ingredients list:
+    ingredients = Ingredient.objects.all()
+
     #selected_med = request.GET.get('medication')
     #print(f"Selected Medication: {selected_med}")
 
@@ -280,7 +282,8 @@ def distrib(request):
             'add_ing_form':ing_form,
             'add_med_ing_form':med_ing_form,
             'inventories':dist_inventories,
-            'med_ingredients':list(med_ingredients)
+            'med_ingredients':list(med_ingredients),
+            'all_ingredients':ingredients
         })
 
 def delete_med(request):
@@ -299,6 +302,13 @@ def delete_med_ing(request):
         
     return redirect('distrib')
 
+def delete_ing(request):
+    if request.method == "POST":
+        ingredient = request.POST.get('del_ing')
+        Ingredient.objects.get(iupac_name=ingredient).delete()
+        
+    return redirect('distrib')
+
 def supply_inventory(request):
     if request.method == "POST":
         qty = request.POST.get('Qty')
@@ -310,7 +320,7 @@ def supply_inventory(request):
         print("Selected_in id:" + str(selected_inventory.inv_id) + "\tamount_left: " + str(selected_inventory.amount_left))
         selected_inventory.amount_left = selected_inventory.amount_left + int(qty)
         selected_inventory.save()
-        
+
     return redirect('distrib')
 
 def healthrep(request):
