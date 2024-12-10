@@ -29,5 +29,6 @@ urlpatterns = [
     path('user_cancel_order/', views.user_cancel_order, name='user_cancel_order'),
     path('delete_med/', views.delete_med, name = 'delete_med'),
     path('delete_med_ing/', views.delete_med_ing, name = 'delete_med_ing'),
+    path('delete_ing/', views.delete_ing, name = 'delete_ing'),
     path('customer/<str:customer_username>/', views.customer_details, name='customer_details')
 ]

@@ -115,13 +115,28 @@
                     {% bootstrap_button button_type="submit" content="Add medication" %}
                 </form>
             </div>
-            <div id="Add_Ingredients" class="tabcontent">
-                <h3>Add new ingredient</h3>
-                <form method="post">
-                    {% csrf_token%}
-                    {% bootstrap_form add_ing_form %}
-                    {% bootstrap_button button_type="submit" content="Add ingredient to Database" %}
-                </form>
+            <div id="Add_Ingredients" class="tabcontent" style = "display:block">
+                <div style = "display:block">
+                    <h3>Add new ingredient</h3>
+                    <form method="post">
+                        {% csrf_token%}
+                        {% bootstrap_form add_ing_form %}
+                        {% bootstrap_button button_type="submit" content="Add ingredient to Database" %}
+                    </form>
+                    <div style = "display: block"> 
+                        {% for Ingredient in all_ingredients %}
+                            <div class = "ing_div_main" style = "display:flex">
+                                <label class = "ing_label">{{Ingredient.iupac_name}}</label>
+                                <form method = "post" action="/delete_ing/">
+                                    {% csrf_token%}
+                                    <button name = "del_ing" value = "{{Ingredient.iupac_name}}"type="submit" class="delete_ing">X</button>
+                                </form>
+                            </div> 
+                        {% endfor %}
+                    </div>
+                  
+                </div>
+               
             </div>
 
         </div>

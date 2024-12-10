@@ -39,7 +39,15 @@ body, html {
     cursor: pointer;
   }
 
-  .delete:hover, .delete_med_ing:hover {
+  .delete_ing {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  .delete:hover, .delete_med_ing:hover, .delete_ing:hover{
     color: red;
   }
 
