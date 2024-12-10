@@ -4,6 +4,7 @@ from .forms import *
 from .models import *
 from django.db.models import Subquery
 from django.contrib import messages
+from django.db import IntegrityError
 import datetime
 
 # Create your views here.
@@ -154,7 +155,10 @@ def user_create_allergy(request):
         print("ingredients_input_id = " + ingredients_input_id)
         if symptoms_text and ingredients_input_id:
             ingredients_id = Ingredient.objects.get(iupac_name=ingredients_input_id)
-            Allergy.objects.create(symptoms=symptoms_text,cust_healthcare_id=cust_id,ingredient_id=ingredients_id)
+            try:
+                Allergy.objects.create(symptoms=symptoms_text,cust_healthcare_id=cust_id,ingredient_id=ingredients_id)
+            except IntegrityError:
+                print("INTEGRITY ERROR IN ALLERGY")   
     return redirect('user')
 
 def user_delete_allergy(request):
@@ -174,7 +178,10 @@ def user_create_pres(request):
         print("pname = " + pname)
         print("dosage = " + pdosage)
         if pname and pdosage and refdate:
-            Prescription.objects.create(cust_healthcare_id=cust_id,prescription_name=pname,refill_date=refdate,dosage=pdosage,rx_number=rxnum)
+            try:
+                Prescription.objects.create(cust_healthcare_id=cust_id,prescription_name=pname,refill_date=refdate,dosage=pdosage,rx_number=rxnum)
+            except IntegrityError:
+                print("INTEGRITY ERROR IN PRESCRIPTION")
     return redirect('user')
 
 def user_delete_pres(request):
@@ -189,7 +196,10 @@ def user_create_insurance(request):
     if request.method == "POST":
         coveragetype = request.POST.get('insurancetypeinput')
         if coveragetype:
-            InsurancePlan.objects.create(coverage_type=coveragetype,cust_healthcare_id=cust_id)
+            try :
+                InsurancePlan.objects.create(coverage_type=coveragetype,cust_healthcare_id=cust_id)
+            except IntegrityError:
+                print("INTEGRITY ERROR IN INSURANCE")
     return redirect('user')
 
 def user_delete_insurance(request):
@@ -206,7 +216,10 @@ def user_create_coverage(request):
         covamt = request.POST.get('covperc')
 
         if insplan and rxnum and covamt:
-            InsuranceCoverage.objects.create(health_insurance_field=insplan,rx_number=rxnum,coverage_amount=covamt,cust_healthcare_id=cust_id)
+            try:
+                InsuranceCoverage.objects.create(health_insurance_field=insplan,rx_number=rxnum,coverage_amount=covamt,cust_healthcare_id=cust_id)
+            except IntegrityError:
+                print("COVERAGE INTEGRITY ERROR")
     return redirect('user')
 
 def user_make_order(request):
