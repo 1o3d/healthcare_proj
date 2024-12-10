@@ -419,27 +419,29 @@ def customer_details(request, customer_username):
     except CustomerEmail.DoesNotExist:
         custEmail = "No email provided"
 
-    allergies = Allergy.objects.filter(cust_healthcare_id=custHealthID).select_related('ingredient_id')
+    # allergies = Allergy.objects.filter(cust_healthcare_id=custHealthID).select_related('ingredient_id')
 
-    # If no allergies are found
-    if not allergies.exists():
-        custAllergies = {"message": "No allergies! :)"}
-    else:
-        custAllergies = [
-            {
-                "iupac_name": allergy.ingredient_id.iupac_name,
-                "common_name": allergy.ingredient_id.common_name
-            }
-            for allergy in allergies
-        ]
+    # # If no allergies are found
+    # if not allergies.exists():
+    #     custAllergies = {"message": "No allergies! :)"}
+    # else:
+    #     custAllergies = [
+    #         {
+    #             "iupac_name": allergy.ingredient_id.iupac_name,
+    #             "common_name": allergy.ingredient_id.common_name
+    #         }
+    #         for allergy in allergies
+    #     ]
 
 
     try:
         custAllList = []
         custAllergy = Allergy.objects.filter(cust_healthcare_id=custHealthID)
         for i in custAllergy:
-            ing = Ingredient.objects.get(allergy=i)
-            custAllList.append(ing.common_name)
+            ing = Ingredient.objects.filter(allergy=i)
+            for j in ing:
+                custAllList.append(j.common_name)
+
     except Allergy.DoesNotExist:
         custAllergies = 'No allergies :)'
 
