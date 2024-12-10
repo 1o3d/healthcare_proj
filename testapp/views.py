@@ -141,7 +141,7 @@ def user(request):
         'meds': presc_meds,
         'allrgmeds': allergic_meds,
         'inventories': inventories,
-        'orders': orders
+        'orders': orders,
     }
     print(orders)
     return render(request, 'user.html',returnstruct)
@@ -158,7 +158,7 @@ def user_create_allergy(request):
             try:
                 Allergy.objects.create(symptoms=symptoms_text,cust_healthcare_id=cust_id,ingredient_id=ingredients_id)
             except IntegrityError:
-                print("INTEGRITY ERROR IN ALLERGY")   
+                messages.error(request, "ERROR: That symptom already exists! Try another name.")
     return redirect('user')
 
 def user_delete_allergy(request):
@@ -181,7 +181,7 @@ def user_create_pres(request):
             try:
                 Prescription.objects.create(cust_healthcare_id=cust_id,prescription_name=pname,refill_date=refdate,dosage=pdosage,rx_number=rxnum)
             except IntegrityError:
-                print("INTEGRITY ERROR IN PRESCRIPTION")
+                messages.error(request, 'ERROR: Rx number is already being used!')
     return redirect('user')
 
 def user_delete_pres(request):
@@ -200,6 +200,7 @@ def user_create_insurance(request):
                 InsurancePlan.objects.create(coverage_type=coveragetype,cust_healthcare_id=cust_id)
             except IntegrityError:
                 print("INTEGRITY ERROR IN INSURANCE")
+                messages.error(request, 'ERROR: Coverage type already exists.')
     return redirect('user')
 
 def user_delete_insurance(request):
@@ -220,6 +221,7 @@ def user_create_coverage(request):
                 InsuranceCoverage.objects.create(health_insurance_field=insplan,rx_number=rxnum,coverage_amount=covamt,cust_healthcare_id=cust_id)
             except IntegrityError:
                 print("COVERAGE INTEGRITY ERROR")
+                messages.error(request, 'ERROR: Plan already has a coverage assigned.')
     return redirect('user')
 
 def user_make_order(request):
@@ -231,8 +233,11 @@ def user_make_order(request):
         exp_date = ord_date + datetime.timedelta(days=30)
 
         if inventory  and orderpres and ord_date and exp_date:
-            PrescriptionOrder.objects.create(rx_number=orderpres,cust_healthcare_id=cust_id,inv_id=inventory,order_date=ord_date,expiry_date=exp_date)
-
+            try:
+                PrescriptionOrder.objects.create(rx_number=orderpres,cust_healthcare_id=cust_id,inv_id=inventory,order_date=ord_date,expiry_date=exp_date)
+            except IntegrityError:
+                messages.error(request, "ERROR: You've already made an order for this prescription!")
+                print("order integrity error")
     return redirect('user')
 
 def user_cancel_order(request):
