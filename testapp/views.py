@@ -114,7 +114,7 @@ def representative_signup(request):
     if request.method == 'POST':
         form = RepresentitiveSignupForm(request.POST)
         if form.is_valid():
-            password = form.password
+            password = form.cleaned_data['password']
             hashed = encode(password)
 
             representative = form.save(commit=False)
