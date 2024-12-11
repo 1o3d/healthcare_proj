@@ -185,7 +185,10 @@ def user_delete_allergy(request):
     if request.method == "POST":
         todelete = request.POST.get('delbutton')
         print("deleting " + todelete)
-        Allergy.objects.filter(pk=todelete).delete()
+        try:
+            Allergy.objects.filter(pk=todelete).delete()
+        except IntegrityError:
+            messages.error(request, "ERROR: Error deleting allergy. Does something rely on it?")
     return redirect('user')
 
 def user_create_pres(request):
@@ -208,7 +211,10 @@ def user_delete_pres(request):
     if request.method == "POST":
         todelete = request.POST.get('presdelbutton')
         print("deleting " + todelete)
-        Prescription.objects.filter(rx_number=todelete).delete()
+        try:
+            Prescription.objects.filter(rx_number=todelete).delete()
+        except IntegrityError:
+            messages.error(request, "ERROR: An order or coverage relies on this prescription, please delete those first!")
     return redirect('user')
 
 def user_create_insurance(request):
@@ -226,7 +232,10 @@ def user_create_insurance(request):
 def user_delete_insurance(request):
     if request.method == "POST":
         todelete = request.POST.get('plandelbutton')
-        InsurancePlan.objects.filter(health_insurance_field=todelete).delete()
+        try:
+            InsurancePlan.objects.filter(health_insurance_field=todelete).delete()
+        except IntegrityError:
+            messages.error(request, "ERROR: Cannot delete insurance. Please check if something depends on it.")
     return redirect('user')
 
 def user_create_coverage(request):
@@ -265,7 +274,10 @@ def user_cancel_order(request):
     if request.method == "POST": 
         order = request.POST.get('ordercancelbutton')
         if order:
-            PrescriptionOrder.objects.filter(rx_number=order).delete()
+            try:
+                PrescriptionOrder.objects.filter(rx_number=order).delete()
+            except IntegrityError:
+                messages.error(request, "ERROR: Cannot cancel order, error occured.")
 
     return redirect('user')
 
